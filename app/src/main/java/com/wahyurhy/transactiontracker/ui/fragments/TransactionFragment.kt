@@ -18,6 +18,7 @@ import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
 import com.wahyurhy.transactiontracker.utils.*
+import java.text.NumberFormat
 import java.util.*
 
 
@@ -30,6 +31,7 @@ class TransactionFragment : Fragment() {
     private var getMonth: Int = 0
     private var dateStart: Long = 0
     private var dateEnd: Long = 0
+    private var totalRevenue = 0.0
     private lateinit var transactionList: ArrayList<TransactionModel>
 
     private var _binding: FragmentTransactionBinding? = null
@@ -88,6 +90,7 @@ class TransactionFragment : Fragment() {
                             }
                         }
                         getTransactionData()
+                        showEmptyRevenue()
                     }
                 }
 
@@ -112,6 +115,13 @@ class TransactionFragment : Fragment() {
                 TODO("Not yet implemented")
             }
         }
+    }
+
+    private fun showEmptyRevenue() {
+        val localeID = Locale("in", "ID")
+        val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
+        binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
+        totalRevenue = 0.0
     }
 
     private fun getTransactionData() {
@@ -176,6 +186,7 @@ class TransactionFragment : Fragment() {
                         }
                     } else {
                         val mAdapter = TransactionAdapter(transactionList)
+
                         binding.rvTransaction.adapter = mAdapter
 
                         mAdapter.setOnItemClickListener(object : TransactionAdapter.onItemClickListener{
@@ -198,6 +209,8 @@ class TransactionFragment : Fragment() {
                         })
 
                         binding.rvTransaction.visibility = View.VISIBLE
+
+                        showTotalRevenue()
                     }
                     binding.apply {
                         shimmerFrameLayout.stopShimmerAnimation()
@@ -220,6 +233,16 @@ class TransactionFragment : Fragment() {
                 Log.d("TransactionFragment", "Listener was cancelled ${error.message}")
             }
         })
+    }
+
+    private fun showTotalRevenue() {
+        for (position in 0 until transactionList.size) {
+            totalRevenue += transactionList[position].amountPayed!!
+        }
+        val localeID = Locale("in", "ID")
+        val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
+        binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
+        totalRevenue = 0.0
     }
 
     private fun getRangeDate(rangeType: Int, month: Int) {
