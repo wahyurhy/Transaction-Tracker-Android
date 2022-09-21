@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="paid_off">Sudah Lunas</string>
+    <string name="paid_yet">Belum Lunas</string>
+    <string name="tv_username">Hai, %1$s!</string>
+    <string name="tv_desc">Pendapatan %1$s! %2$</string>
+    <string name="login">Masuk</string>
+    <string name="password">Kata sandi</string>
+    <string name="forgot_password">Lupa kata sandi?</string>
+    <string name="or">Atau</string>
+    <string name="login_with_google">Masuk dengan Google</string>
+    <string name="not_a_member">Belum mendaftar?</string>
+    <string name="register">Daftar</string>
+    <string name="sign_up">Daftar</string>
+    <string name="name">Nama</string>
+    <string name="new_password">Password baru</string>
+    <string name="confirm_new_password">Konfirmasi password baru</string>
+    <string name="joined_us_before">Sudah mendaftar? Masuk</string>
+    <string name="verified_account">Akun Terverifikasi</string>
+    <string name="unverified_account">Akun Belum Terverifikasi</string>
+    <string name="info_revenue">Pendapatan Bulan %1$s</string>
+
+    <string-array name="filter_sort_by_periode">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
+
+    <string-array name="filter_sort_by_status">
+        <item>Semua Kategori</item>
+        <item>Sudah Lunas</item>
+        <item>Belum Lunas</item>
+    </string-array>
+    <string name="list_of_transactions">Daftar Transaksi</string>
+    <string name="greetings_name">Hai, %1$s!</string>
+    <string name="visibility_no_data_info">Tidak ada data %1$s pada bulan %2$s</string>
+    <string name="save">Simpan</string>
+    <string name="update">Ubah</string>
+    <string name="edit_data_title">Ubah Data %1$s</string>
+    <string name="no_transaction_yet">Belum Ada Transaksi</string>
+</resources>

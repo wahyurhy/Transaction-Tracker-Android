@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "244448595042",
+    "firebase_url": "https://transaction-tracker-99907-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "transaction-tracker-99907",
+    "storage_bucket": "transaction-tracker-99907.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244448595042:android:f3c0c29bed1b7eb9c5153b",
+        "android_client_info": {
+          "package_name": "com.wahyurhy.transactiontracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244448595042-k2tis7f5tmop4hog3va9p666vsasbjho.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wahyurhy.transactiontracker",
+            "certificate_hash": "fc467b95576a03726999bf1983b393fc92ec0ae5"
+          }
+        },
+        {
+          "client_id": "244448595042-2gs2pf7e5c1igrlklqtafhra6v6u6uip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB4-KYXGC8l7jYOB2USq-w58KFdcV1v6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244448595042-2gs2pf7e5c1igrlklqtafhra6v6u6uip.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

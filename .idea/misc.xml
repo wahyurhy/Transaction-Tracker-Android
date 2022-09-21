@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable-v24/bg_state.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/bg_rounded_dialog.xml" value="0.1195" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/bg_rounded_layout.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/bg_spinner.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/bg_state.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/bg_state_false.xml" value="0.1055" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/bg_state_true.xml" value="0.1055" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/btn_rounded.xml" value="0.1055" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/btn_rounded_gray.xml" value="0.1125" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_at.xml" value="0.111" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_back.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_circle.xml" value="0.1175" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_delete.xml" value="0.1195" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_edit.xml" value="0.1195" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_google.xml" value="0.111" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_login_image.xml" value="0.111" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_no_data.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_password.xml" value="0.111" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_password_hidden.xml" value="0.111" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_plus.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_rupiah.xml" value="0.1195" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_rupiah_dark.xml" value="0.1195" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_signup_image.xml" value="0.111" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_transaction_state.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/ic_unverified.xml" value="0.1175" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/password_toggle_drawable.xml" value="0.111" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/rounded_transaction_fragment.xml" value="0.1055" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/drawable/tv_skeleton_loading.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/abs_layout.xml" value="0.32934131736526945" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/activity_add_transaction.xml" value="0.3579175704989154" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/activity_login.xml" value="0.2" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/activity_main.xml" value="0.16717325227963525" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/activity_register.xml" value="0.1859375" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/activity_signup.xml" value="0.35" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/activity_transaction_details.xml" value="0.3852295409181637" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/edit_dialog.xml" value="0.3333333333333333" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/fragment_profile.xml" value="0.6" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/fragment_transaction.xml" value="0.31085526315789475" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/shimmer_placeholder_layout.xml" value="0.3716216216216216" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/layout/transaction_list_item.xml" value="0.33" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/menu/nav_menu.xml" value="0.1" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1175" />
+        <entry key="..\:/AndroidLearningPro/TransactionTracker/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1175" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
