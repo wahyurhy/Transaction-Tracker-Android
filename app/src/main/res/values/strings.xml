@@ -31,6 +31,15 @@
     <string name="update">Update</string>
     <string name="edit_data_title">Edit Data %1$s</string>
     <string name="no_transaction_yet">No Transaction Yet!</string>
+    <string name="back">Back</string>
+    <string name="add_customer">Add Customer</string>
+    <string name="name_hint">Name</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="add_from_contact">Add from contact</string>
+    <string name="payment_amount">Payment Amount</string>
+    <string name="today_s_transaction_date">Today\'s Transaction Date</string>
+    <string name="save_btn">Save</string>
+    <string name="add_transaction">Add Transaction</string>
 
     <string-array name="filter_sort_by_periode">
         <item>January</item>

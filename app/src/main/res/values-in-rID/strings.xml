@@ -47,4 +47,13 @@
     <string name="update">Ubah</string>
     <string name="edit_data_title">Ubah Data %1$s</string>
     <string name="no_transaction_yet">Belum Ada Transaksi</string>
+    <string name="back">Kembali</string>
+    <string name="add_customer">Tambah Pelanggan</string>
+    <string name="name_hint">Nama</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="add_from_contact">Tambahkan dari kontak</string>
+    <string name="payment_amount">Nominal Pembayaran</string>
+    <string name="today_s_transaction_date">Tanggal Transaksi Hari Ini</string>
+    <string name="save_btn">Simpan</string>
+    <string name="add_transaction">Tambah Transaksi</string>
 </resources>

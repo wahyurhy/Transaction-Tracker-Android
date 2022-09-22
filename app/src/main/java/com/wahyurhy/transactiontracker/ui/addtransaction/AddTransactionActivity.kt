@@ -33,6 +33,7 @@ class AddTransactionActivity : AppCompatActivity() {
     private var date: Long = 0
     private var paymentAmount: Double = 0.0
     private var invertedDate: Long = 0
+    private var whatsApp = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,12 +84,11 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun saveTransactionData() {
         val name = binding.edName.text.toString().trim()
-        val whatsApp = binding.edWhatsApp.text.toString().trim().replace("-", "")
+        whatsApp = binding.edWhatsApp.text.toString().trim().replace("-", "")
         val amount = binding.edAmount.text.toString().trim()
 
         when {
             name.isEmpty() -> binding.edName.error = "Please enter name"
-            whatsApp.isEmpty() -> binding.edWhatsApp.error = "Please enter WhatsApp number"
             amount.isEmpty() -> binding.edAmount.error = "Please enter amount"
             else -> {
 
