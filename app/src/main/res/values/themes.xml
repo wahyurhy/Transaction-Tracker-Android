@@ -46,6 +46,9 @@
     <style name="GoogleButtonLogin" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/blue_soft</item>
     </style>
+    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:editTextColor">@color/black</item>
+    </style>
 
     <style name="RoundedCornersDialog" parent="@style/Theme.MaterialComponents.Dialog">
         <item name="dialogCornerRadius">16dp</item>

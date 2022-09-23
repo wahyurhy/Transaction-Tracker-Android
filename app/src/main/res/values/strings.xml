@@ -20,7 +20,7 @@
     <string name="name">Name</string>
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
-    <string name="joined_us_before">Joined us before? Login</string>
+    <string name="joined_us_before">Joined us before?</string>
     <string name="verified_account">Verified Account</string>
     <string name="unverified_account">Unverified Account</string>
     <string name="info_revenue">Income of %1$s</string>
@@ -40,6 +40,40 @@
     <string name="today_s_transaction_date">Today\'s Transaction Date</string>
     <string name="save_btn">Save</string>
     <string name="add_transaction">Add Transaction</string>
+    <string name="rupiah_s_edit_text">Rp%1$s</string>
+    <string name="payed_off">Paid Off!</string>
+    <string name="payed_over" formatted="true">Paid off and\nover %1$s</string>
+    <string name="edit_title">Edit Data %1$s</string>
+    <string name="go_to_whatsapp">Go to whatsApp</string>
+    <string name="detail_customer">Detail Customer</string>
+    <string name="delete_this_transaction">Delete this transaction?</string>
+    <string name="change_data">Change Data</string>
+    <string name="info_total_should_be_paid">Total should be paid:</string>
+    <string name="payment_amount_title">Payment Amount</string>
+    <string name="delete_number_of_payment_amount">Delete Number of Payment Amount</string>
+    <string name="current_payment_amount">Current Payment Amount:</string>
+    <string name="payment_left">Payment left:</string>
+    <string name="info_amount_over">Amount of Payment is greater than Total Payment of %1$s</string>
+    <string name="data_saved">Data Saved!</string>
+    <string name="sign_up_success">Sign up Successful</string>
+    <string name="data_inserted_success">Data Inserted Successfully</string>
+    <string name="password_is_not_match">Password is not Matching</string>
+    <string name="verified_account_info">Your account is verified!</string>
+    <string name="check_email_info">Check your Email! (including Spam)</string>
+    <string name="login_success">Login Successful</string>
+    <string name="empty_field_info">Empty Fields Are no Allowed</string>
+    <string name="invalid_empty_email_info">Invalid or Empty Email</string>
+    <string name="you_can_add_transaction_below">You can add transactions below</string>
+    <string name="print_data_transactions">Print Data Transactions</string>
+    <string name="rp_revenue_info" translatable="false">Rp</string>
+    <string name="there_is_no_all_categories_transaction_at_this_month">There is no All Categories transaction\nat This Month</string>
+    <string name="search_hint">Search name here…</string>
+    <string name="transaction_data_updated">Transaction Data Updated</string>
+    <string name="confirmation">Are you sure?</string>
+    <string name="confirmation_info">Do you want to delete this transaction?</string>
+    <string name="yes_answer">Yes</string>
+    <string name="transaction_data_deleted">Transaction Data Deleted</string>
+    <string name="no_answer">No</string>
 
     <string-array name="filter_sort_by_periode">
         <item>January</item>

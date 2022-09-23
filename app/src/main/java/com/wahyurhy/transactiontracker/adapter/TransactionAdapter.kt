@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
@@ -48,6 +49,9 @@ class TransactionAdapter(private val transactionList: ArrayList<TransactionModel
                 currentTransaction.stateTransaction == true -> {
                     tvState.text = itemView.context.resources.getString(R.string.paid_off)
                     tvState.setBackgroundResource(R.drawable.bg_state_true)
+                    if (currentTransaction.amountOver != 0.0) {
+                        tvTransactionAmount.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+                    }
                 }
                 currentTransaction.stateTransaction == false -> {
                     tvState.text = itemView.context.resources.getString(R.string.paid_yet)

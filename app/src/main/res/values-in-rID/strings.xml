@@ -15,7 +15,7 @@
     <string name="name">Nama</string>
     <string name="new_password">Password baru</string>
     <string name="confirm_new_password">Konfirmasi password baru</string>
-    <string name="joined_us_before">Sudah mendaftar? Masuk</string>
+    <string name="joined_us_before">Sudah mendaftar?</string>
     <string name="verified_account">Akun Terverifikasi</string>
     <string name="unverified_account">Akun Belum Terverifikasi</string>
     <string name="info_revenue">Pendapatan Bulan %1$s</string>
@@ -56,4 +56,37 @@
     <string name="today_s_transaction_date">Tanggal Transaksi Hari Ini</string>
     <string name="save_btn">Simpan</string>
     <string name="add_transaction">Tambah Transaksi</string>
+    <string name="rupiah_s_edit_text">Rp%1$s</string>
+    <string name="payed_off">Sudah Lunas!</string>
+    <string name="payed_over" formatted="true">Sudah Lunas dan\nlebih %1$s</string>
+    <string name="edit_title">Ubah Data %1$s</string>
+    <string name="go_to_whatsapp">Chat orang ini</string>
+    <string name="detail_customer">Detail Pelanggan</string>
+    <string name="delete_this_transaction">Hapus transaksi ini?</string>
+    <string name="change_data">Ubah Data</string>
+    <string name="info_total_should_be_paid">Total yang harus dibayar:</string>
+    <string name="payment_amount_title">Nominal Pembayaran</string>
+    <string name="delete_number_of_payment_amount">Hapus Jumlah Nominal Pembayaran</string>
+    <string name="current_payment_amount">Jumlah Pembayaran saat ini:</string>
+    <string name="payment_left">Sisa Pembayaran:</string>
+    <string name="info_amount_over">Nominal Pembayaran lebih besar dari Total Pembayaran sebesar %1$s</string>
+    <string name="data_saved">Data Berhasil Disimpan!</string>
+    <string name="sign_up_success">Berhasil Bergabung!</string>
+    <string name="data_inserted_success">Berhasil Menambahkan Transaksi!</string>
+    <string name="password_is_not_match">Kata sandi tidak sama</string>
+    <string name="verified_account_info">Akun Anda sudah terverifikasi!</string>
+    <string name="check_email_info">Periksa Email Anda! (Termasuk pada Spam)</string>
+    <string name="login_success">Berhasil Masuk!</string>
+    <string name="empty_field_info">Harap Lengkapi Data!</string>
+    <string name="invalid_empty_email_info">Harap Masukan Email dengan Benar!</string>
+    <string name="you_can_add_transaction_below">Anda dapat menambahkan transaksi dengan menekan tombol (+)</string>
+    <string name="print_data_transactions">Cetak Data Transaksi</string>
+    <string name="there_is_no_all_categories_transaction_at_this_month">Tidak ada transaksi Semua Kategori di Bulan Ini</string>
+    <string name="search_hint">Cari nama disini...</string>
+    <string name="transaction_data_updated">Data telah diubah</string>
+    <string name="confirmation">Apakah Anda yakin?</string>
+    <string name="confirmation_info">Apakah Anda yakin untuk menghapus transaksi ini?</string>
+    <string name="yes_answer">Ya</string>
+    <string name="transaction_data_deleted">Data Transaksi Dihapus</string>
+    <string name="no_answer">Tidak</string>
 </resources>

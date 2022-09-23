@@ -1,6 +1,7 @@
 package com.wahyurhy.transactiontracker.utils
 
 val SELECT_PHONE_NUMBER = 2
+val CONTACT_PICK_CODE = 2
 
 val TRANSACTION_ID_EXTRA = "transactionID"
 val NAME_EXTRA = "name"

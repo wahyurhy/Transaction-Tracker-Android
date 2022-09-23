@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +15,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityAddTransactionBinding
 import com.wahyurhy.transactiontracker.utils.SELECT_PHONE_NUMBER
@@ -47,7 +49,7 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.edWhatsApp.setMaskingPhoneNumber("")
         binding.ibContact.setOnClickListener {
             val intentPickContact = Intent(Intent.ACTION_PICK)
-            intentPickContact.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+            intentPickContact.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
             startActivityForResult(intentPickContact, SELECT_PHONE_NUMBER)
         }
 
@@ -83,6 +85,7 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun saveTransactionData() {
+        showLoading(true)
         val name = binding.edName.text.toString().trim()
         whatsApp = binding.edWhatsApp.text.toString().trim().replace("-", "")
         val amount = binding.edAmount.text.toString().trim()
@@ -115,11 +118,13 @@ class AddTransactionActivity : AppCompatActivity() {
 
                 dbRef.child(transactionID).setValue(transaction)
                     .addOnCompleteListener {
+                        showLoading(false)
                         Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
-                        Toast.makeText(this, "Data Inserted Successfully", Toast.LENGTH_SHORT)
+                        Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT)
                             .show()
                         finish()
                     }.addOnFailureListener { err ->
+                        showLoading(false)
                         Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_SHORT).show()
                     }
                 isSubmitted = true
@@ -177,5 +182,12 @@ class AddTransactionActivity : AppCompatActivity() {
             day
         )
         dpd.show()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        when (isLoading) {
+            true -> binding.progressBar.visibility = View.VISIBLE
+            false -> binding.progressBar.visibility = View.GONE
+        }
     }
 }

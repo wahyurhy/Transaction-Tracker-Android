@@ -45,13 +45,14 @@
             android:layout_marginTop="50dp">
 
             <EditText
-                android:id="@+id/edName"
+                android:id="@+id/edNameDialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_user"
                 android:drawablePadding="8dp"
                 android:ems="10"
                 android:fontFamily="@font/poppins_light"
+                android:text=""
                 android:hint="Nama"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
@@ -79,7 +80,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <EditText
-                        android:id="@+id/edWhatsApp"
+                        android:id="@+id/edWhatsAppDialog"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_whatsapp_stroke"

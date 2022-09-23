@@ -41,7 +41,8 @@
                         android:fontFamily="@font/poppins_bold"
                         android:text="Hi, Dasriyah!"
                         android:textColor="@color/white"
-                        android:textSize="17sp" />
+                        android:textSize="17sp"
+                        tools:ignore="HardcodedText" />
 
                     <ImageView
                         android:id="@+id/printButton"
@@ -50,7 +51,8 @@
                         android:layout_gravity="end"
                         android:layout_marginEnd="14dp"
                         android:backgroundTint="@color/white"
-                        android:src="@drawable/ic_print" />
+                        android:src="@drawable/ic_print"
+                        android:contentDescription="@string/print_data_transactions" />
 
                 </Toolbar>
 
@@ -72,7 +74,8 @@
                         android:fontFamily="@font/poppins_regular"
                         android:text="@string/info_revenue"
                         android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:ignore="RelativeOverlap" />
 
                     <Spinner
                         android:id="@+id/timeShowSpinner"
@@ -96,7 +99,7 @@
                         android:layout_marginStart="15dp"
                         android:layout_marginBottom="18dp"
                         android:fontFamily="@font/poppins_semi_bold"
-                        android:text="Rp--------"
+                        android:text="@string/rp_revenue_info"
                         android:textColor="@color/white"
                         android:textSize="36sp" />
 
@@ -133,7 +136,8 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="5dp"
-                    android:background="@color/gray" />
+                    android:background="@color/gray"
+                    tools:ignore="ContentDescription" />
 
             </androidx.cardview.widget.CardView>
 
@@ -164,11 +168,36 @@
                 android:background="@drawable/bg_spinner"
                 android:textColor="@color/black" />
 
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchBar"
+                android:theme="@style/MySearchViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_search"
+                android:elevation="3dp"
+                android:fontFamily="@font/poppins_regular"
+                android:inputType="text"
+                android:paddingStart="-5dp"
+                android:paddingEnd="0dp"
+                android:singleLine="true"
+                android:textColorHint="@color/black"
+                android:textSize="16sp"
+                android:layout_below="@id/tvTitleCardTransaction"
+                app:closeIcon="@drawable/ic_cross"
+                app:iconifiedByDefault="false"
+                app:queryHint="@string/search_hint"
+                app:searchIcon="@drawable/ic_search"
+                tools:ignore="Autofill" />
+
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmerFrameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/tvTitleCardTransaction"
+                android:layout_below="@+id/searchBar"
                 android:layout_marginBottom="1dp">
 
                 <LinearLayout
@@ -200,12 +229,13 @@
                 android:id="@+id/noDataImage"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_below="@id/tvTitleCardTransaction"
+                android:layout_below="@id/searchBar"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="60dp"
                 android:gravity="center"
                 android:src="@drawable/ic_no_data"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/tvNoDataTitle"
@@ -231,7 +261,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/poppins_medium"
                 android:gravity="center"
-                android:text="You can add transaction below"
+                android:text="@string/you_can_add_transaction_below"
                 android:textColor="#B3B3B3"
                 android:textSize="15sp"
                 android:visibility="gone" />
@@ -245,7 +275,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/poppins_medium"
                 android:gravity="center"
-                android:text="There is no All Type transaction\nat This Month"
+                android:text="@string/there_is_no_all_categories_transaction_at_this_month"
                 android:textColor="#B3B3B3"
                 android:textSize="15sp"
                 android:visibility="gone" />
@@ -254,7 +284,7 @@
                 android:id="@+id/swipeRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="700dp"
-                android:layout_below="@id/tvTitleCardTransaction">
+                android:layout_below="@id/searchBar">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTransaction"

@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.databinding.ActivitySignupBinding
 import com.wahyurhy.transactiontracker.ui.login.LoginActivity
 
@@ -35,7 +36,7 @@ class SignupActivity : AppCompatActivity() {
                         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                             if (it.isSuccessful) {
                                 val intent = Intent(this, LoginActivity::class.java)
-                                Toast.makeText(this, "Sign up Successful", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, getString(R.string.sign_up_success), Toast.LENGTH_SHORT).show()
                                 progressBarStatus(false)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
@@ -45,13 +46,13 @@ class SignupActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-                        Toast.makeText(this, "Password is not Matching", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.password_is_not_match), Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Empty Fields Are no Allowed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.empty_field_info), Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Invalid or Empty Email", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.invalid_empty_email_info), Toast.LENGTH_SHORT).show()
             }
         }
 

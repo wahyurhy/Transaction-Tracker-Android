@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.databinding.ActivityLoginBinding
 import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.ui.signup.SignupActivity
@@ -80,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     Log.d(ContentValues.TAG, "signInWithCredential:success")
                     val intent = Intent(this, MainActivity::class.java)
-                    Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                     progressBarStatus(false)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
@@ -106,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
                         val intent = Intent(this, MainActivity::class.java)
-                        Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                         progressBarStatus(false)
                         startActivity(intent)
                     } else {
@@ -115,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                Toast.makeText(this, "Empty Fields Are no Allowed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.empty_field_info), Toast.LENGTH_SHORT).show()
             }
         }
     }

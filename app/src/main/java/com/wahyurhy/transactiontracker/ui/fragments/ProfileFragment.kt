@@ -12,6 +12,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.databinding.FragmentProfileBinding
 import com.wahyurhy.transactiontracker.ui.login.LoginActivity
 
@@ -55,7 +56,7 @@ class ProfileFragment : Fragment() {
                 binding.verifiedStatus.setOnClickListener {
                     Toast.makeText(
                         this@ProfileFragment.activity,
-                        "Your account is verified!",
+                        getString(R.string.verified_account_info),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -68,7 +69,7 @@ class ProfileFragment : Fragment() {
                         if (it.isSuccessful) {
                             Toast.makeText(
                                 this@ProfileFragment.activity,
-                                "Check your Email! (including Spam)",
+                                getString(R.string.check_email_info),
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
