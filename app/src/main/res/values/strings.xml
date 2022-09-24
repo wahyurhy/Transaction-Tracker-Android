@@ -74,6 +74,7 @@
     <string name="yes_answer">Yes</string>
     <string name="transaction_data_deleted">Transaction Data Deleted</string>
     <string name="no_answer">No</string>
+    <string name="total_transaction">Total Transaction: %1$s</string>
 
     <string-array name="filter_sort_by_periode">
         <item>January</item>

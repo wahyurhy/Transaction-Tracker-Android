@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
@@ -32,6 +33,7 @@ class TransactionFragment : Fragment() {
     private var dateStart: Long = 0
     private var dateEnd: Long = 0
     private var totalRevenue = 0.0
+    private var totaTransaction = 0
     private lateinit var transactionList: ArrayList<TransactionModel>
 
     private var _binding: FragmentTransactionBinding? = null
@@ -62,6 +64,69 @@ class TransactionFragment : Fragment() {
         transactionList = arrayListOf()
 
         getTransactionData()
+
+        binding.searchBar.setOnQueryTextListener(object : OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (newText != "") {
+                    val uid = user?.uid
+                    if (uid != null) {
+                        dbRef = FirebaseDatabase.getInstance().getReference(uid)
+                    }
+                    val query: Query = dbRef.orderByChild("name").startAt(newText)
+                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            transactionList.clear()
+                            if (snapshot.exists()) {
+                                when (selectedShowStatus) {
+                                    resources.getStringArray(R.array.filter_sort_by_status)[0].toString() -> {
+                                        for (transactionSnap in snapshot.children) {
+                                            val transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                                transactionList.add(transactionData)
+                                            }
+                                        }
+                                    }
+                                    resources.getStringArray(R.array.filter_sort_by_status)[1].toString() -> {
+                                        for (transactionSnap in snapshot.children) {
+                                            val transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            if (transactionData!!.stateTransaction!!) {
+                                                if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                                    transactionList.add(transactionData)
+                                                    Log.d("TransactionFragment", "onDataChange: TRUE")
+                                                }
+                                            }
+                                        }
+                                    }
+                                    resources.getStringArray(R.array.filter_sort_by_status)[2].toString() -> {
+                                        for (transactionSnap in snapshot.children) {
+                                            val transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            if (!transactionData!!.stateTransaction!!) {
+                                                if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                                    transactionList.add(transactionData)
+                                                    Log.d("TransactionFragment", "onDataChange: FALSE")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                showInAdapter(false)
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+                    })
+                } else {
+                    getTransactionData()
+                }
+                return true
+            }
+        })
 
         binding.swipeRefresh.setOnRefreshListener {
             getTransactionData()
@@ -139,7 +204,9 @@ class TransactionFragment : Fragment() {
         if (uid != null) {
             dbRef = FirebaseDatabase.getInstance().getReference(uid)
         }
+
         val query: Query = dbRef.orderByChild("dueDateTransaction")
+
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 transactionList.clear()
@@ -185,32 +252,7 @@ class TransactionFragment : Fragment() {
                             visibilityNoData.text = resources.getString(R.string.visibility_no_data_info, selectedShowStatus, selectedTimeSpan)
                         }
                     } else {
-                        val mAdapter = TransactionAdapter(transactionList)
-
-                        binding.rvTransaction.adapter = mAdapter
-
-                        mAdapter.setOnItemClickListener(object : TransactionAdapter.onItemClickListener{
-                            override fun onItemClick(position: Int) {
-                                val intent = Intent(this@TransactionFragment.activity, TransactionDetailsActivity::class.java)
-
-                                intent.putExtra(TRANSACTION_ID_EXTRA, transactionList[position].id)
-                                intent.putExtra(NAME_EXTRA, transactionList[position].name)
-                                intent.putExtra(DATE_EXTRA, transactionList[position].dueDateTransaction)
-                                intent.putExtra(DATE_INVERTED_EXTRA, transactionList[position].invertedDate)
-                                intent.putExtra(AMOUNT_EXTRA, transactionList[position].paymentAmount)
-                                intent.putExtra(STATUS_EXTRA, transactionList[position].stateTransaction)
-                                intent.putExtra(WHATS_APP_EXTRA, transactionList[position].whatsAppNumber)
-                                intent.putExtra(AMOUNT_LEFT_EXTRA, transactionList[position].amountLeft)
-                                intent.putExtra(AMOUNT_OVER_EXTRA, transactionList[position].amountOver)
-                                intent.putExtra(AMOUNT_PAYED, transactionList[position].amountPayed)
-
-                                startActivity(intent)
-                            }
-                        })
-
-                        binding.rvTransaction.visibility = View.VISIBLE
-
-                        showTotalRevenue()
+                        showInAdapter(true)
                     }
                     binding.apply {
                         shimmerFrameLayout.stopShimmerAnimation()
@@ -235,13 +277,46 @@ class TransactionFragment : Fragment() {
         })
     }
 
+    private fun showInAdapter(showRevenue: Boolean) {
+        val mAdapter = TransactionAdapter(transactionList)
+
+        binding.rvTransaction.adapter = mAdapter
+
+        mAdapter.setOnItemClickListener(object : TransactionAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+                val intent = Intent(this@TransactionFragment.activity, TransactionDetailsActivity::class.java)
+
+                intent.putExtra(TRANSACTION_ID_EXTRA, transactionList[position].id)
+                intent.putExtra(NAME_EXTRA, transactionList[position].name)
+                intent.putExtra(DATE_EXTRA, transactionList[position].dueDateTransaction)
+                intent.putExtra(DATE_INVERTED_EXTRA, transactionList[position].invertedDate)
+                intent.putExtra(AMOUNT_EXTRA, transactionList[position].paymentAmount)
+                intent.putExtra(STATUS_EXTRA, transactionList[position].stateTransaction)
+                intent.putExtra(WHATS_APP_EXTRA, transactionList[position].whatsAppNumber)
+                intent.putExtra(AMOUNT_LEFT_EXTRA, transactionList[position].amountLeft)
+                intent.putExtra(AMOUNT_OVER_EXTRA, transactionList[position].amountOver)
+                intent.putExtra(AMOUNT_PAYED, transactionList[position].amountPayed)
+
+                startActivity(intent)
+            }
+        })
+
+        binding.rvTransaction.visibility = View.VISIBLE
+
+        if (showRevenue) {
+            showTotalRevenue()
+        }
+    }
+
     private fun showTotalRevenue() {
         for (position in 0 until transactionList.size) {
             totalRevenue += transactionList[position].amountPayed!!
+            totaTransaction = transactionList.size
         }
         val localeID = Locale("in", "ID")
         val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
         binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
+        binding.tvTotalClient.text = resources.getString(R.string.total_transaction, totaTransaction.toString())
         totalRevenue = 0.0
     }
 

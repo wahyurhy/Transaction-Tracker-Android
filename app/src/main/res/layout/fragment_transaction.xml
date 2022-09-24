@@ -180,7 +180,7 @@
                 android:background="@drawable/bg_search"
                 android:elevation="3dp"
                 android:fontFamily="@font/poppins_regular"
-                android:inputType="text"
+                android:inputType="textCapWords"
                 android:paddingStart="-5dp"
                 android:paddingEnd="0dp"
                 android:singleLine="true"
@@ -192,6 +192,16 @@
                 app:queryHint="@string/search_hint"
                 app:searchIcon="@drawable/ic_search"
                 tools:ignore="Autofill" />
+
+            <TextView
+                android:id="@+id/tvTotalClient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/total_transaction"
+                android:layout_marginTop="-18dp"
+                android:layout_marginStart="9dp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_below="@id/tvTitleCardTransaction" />
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmerFrameLayout"
