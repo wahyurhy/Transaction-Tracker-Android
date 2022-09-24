@@ -18,6 +18,7 @@ import com.wahyurhy.transactiontracker.utils.*
 import java.util.*
 
 class MonthlyCreateTransaction(
+    private val transactionID: String,
     private val name: String,
     private val whatsApp: String,
     private val paymentAmount: Double,
@@ -63,7 +64,7 @@ class MonthlyCreateTransaction(
         }
 
         for (i in 1..12) {
-            val transactionID = dbRef.push().key!!
+            val transactionID = transactionID + i
 
             val plusOneMonth = 2629800000 * i
             val nextMonth = date + plusOneMonth

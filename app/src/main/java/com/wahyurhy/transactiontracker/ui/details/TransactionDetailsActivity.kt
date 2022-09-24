@@ -109,19 +109,19 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     private fun deleteRecord(transactionID: String) {
+        val lastCharOfTransactionID = transactionID.takeLast(1).toInt()
+        val dropLastOfTransactionID = transactionID.dropLast(1)
+
         val user = Firebase.auth.currentUser
         val uid = user?.uid
         if (uid != null) {
-            val dbRef = FirebaseDatabase.getInstance().getReference(uid).child(transactionID)
-            val mTask = dbRef.removeValue()
-
-            mTask.addOnSuccessListener {
-                Toast.makeText(this, getString(R.string.transaction_data_deleted), Toast.LENGTH_SHORT).show()
-                finish()
-            }.addOnFailureListener {
-                Toast.makeText(this, "Deleting Error ${it.message}", Toast.LENGTH_SHORT).show()
+            for (i in lastCharOfTransactionID..12) {
+                val dbRef = FirebaseDatabase.getInstance().getReference(uid).child(dropLastOfTransactionID + i.toString())
+                dbRef.removeValue()
             }
         }
+        Toast.makeText(this, R.string.transaction_data_deleted, Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun logicBusinessSetUp() {
@@ -270,6 +270,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         val transactionIDExtra = intent.getStringExtra(TRANSACTION_ID_EXTRA).toString()
 
+        val lastCharOfTransactionID = transactionIDExtra.takeLast(1).toInt()
+        val dropLastOfTransactionID = transactionIDExtra.dropLast(1)
+
         bind.edNameDialog.setText(intent.getStringExtra(NAME_EXTRA).toString())
         bind.edWhatsAppDialog.setMaskingPhoneNumber("")
         bind.edWhatsAppDialog.setText(intent.getStringExtra(WHATS_APP_EXTRA).toString().replace(".", ""))
@@ -301,18 +304,26 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         bind.btnUpdate.setOnClickListener {
-            updateTransactionData(
-                transactionIDExtra,
-                bind.edNameDialog.text.toString().trim(),
-                bind.edWhatsAppDialog.text.toString().replace("-", "").trim(),
-                bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble(),
-                date,
-                status = amountCurrently >= bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble(),
-                invertedDate,
-                amountLeft = bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble() - amountCurrently,
-                amountOver,
-                amountCurrently
-            )
+            for (i in lastCharOfTransactionID..12) {
+
+                val plusOneMonth = 2629800000 * i
+                val nextMonth = date + plusOneMonth
+
+                val invertedDate = nextMonth * -1
+
+                updateTransactionData(
+                    dropLastOfTransactionID + i.toString(),
+                    bind.edNameDialog.text.toString().trim(),
+                    bind.edWhatsAppDialog.text.toString().replace("-", "").trim(),
+                    bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble(),
+                    nextMonth,
+                    status = false,
+                    invertedDate,
+                    0.0,
+                    0.0,
+                    0.0
+                )
+            }
             alertDialog.dismiss()
             Toast.makeText(applicationContext, getString(R.string.transaction_data_updated), Toast.LENGTH_LONG).show()
             val intentRefresh = Intent(this, TransactionDetailsActivity::class.java)
@@ -376,6 +387,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
                 val transactionIDExtra = intent.getStringExtra(TRANSACTION_ID_EXTRA).toString()
 
+                val lastCharOfTransactionID = transactionIDExtra.takeLast(1).toInt()
+                val dropLastOfTransactionID = transactionIDExtra.dropLast(1)
+
                 bind.edNameDialog.setText(name)
                 bind.edWhatsAppDialog.setMaskingPhoneNumber("")
                 bind.edWhatsAppDialog.setText(number)
@@ -403,18 +417,26 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 }
 
                 bind.btnUpdate.setOnClickListener {
-                    updateTransactionData(
-                        transactionIDExtra,
-                        bind.edNameDialog.text.toString().trim(),
-                        bind.edWhatsAppDialog.text.toString().replace("-", "").trim(),
-                        bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble(),
-                        date,
-                        status = amountCurrently >= bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble(),
-                        invertedDate,
-                        amountLeft = bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble() - amountCurrently,
-                        amountOver,
-                        amountCurrently
-                    )
+                    for (i in lastCharOfTransactionID..12) {
+
+                        val plusOneMonth = 2629800000 * i
+                        val nextMonth = date + plusOneMonth
+
+                        val invertedDate = nextMonth * -1
+
+                        updateTransactionData(
+                            dropLastOfTransactionID + i.toString(),
+                            bind.edNameDialog.text.toString().trim(),
+                            bind.edWhatsAppDialog.text.toString().replace("-", "").trim(),
+                            bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble(),
+                            nextMonth,
+                            status = false,
+                            invertedDate,
+                            0.0,
+                            0.0,
+                            0.0
+                        )
+                    }
                     alertDialog.dismiss()
                     Toast.makeText(applicationContext, getString(R.string.transaction_data_updated), Toast.LENGTH_LONG).show()
                     val intentRefresh = Intent(this, TransactionDetailsActivity::class.java)
