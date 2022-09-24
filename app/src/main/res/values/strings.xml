@@ -75,6 +75,8 @@
     <string name="transaction_data_deleted">Transaction Data Deleted</string>
     <string name="no_answer">No</string>
     <string name="total_transaction">Total Transaction: %1$s</string>
+    <string name="due_date_notification_content">%1$s is due</string>
+    <string name="notif_today_due_date_title">Today\'s Due Date</string>
 
     <string-array name="filter_sort_by_periode">
         <item>January</item>

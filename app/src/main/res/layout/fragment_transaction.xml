@@ -197,11 +197,12 @@
                 android:id="@+id/tvTotalClient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/total_transaction"
+                android:text="Total Transaction: 0"
                 android:layout_marginTop="-18dp"
                 android:layout_marginStart="9dp"
                 android:fontFamily="@font/poppins_regular"
-                android:layout_below="@id/tvTitleCardTransaction" />
+                android:layout_below="@id/tvTitleCardTransaction"
+                tools:ignore="HardcodedText" />
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmerFrameLayout"

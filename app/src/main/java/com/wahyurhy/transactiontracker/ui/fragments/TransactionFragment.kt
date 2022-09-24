@@ -33,7 +33,7 @@ class TransactionFragment : Fragment() {
     private var dateStart: Long = 0
     private var dateEnd: Long = 0
     private var totalRevenue = 0.0
-    private var totaTransaction = 0
+    private var totalTransaction = 0
     private lateinit var transactionList: ArrayList<TransactionModel>
 
     private var _binding: FragmentTransactionBinding? = null
@@ -94,7 +94,7 @@ class TransactionFragment : Fragment() {
                                         for (transactionSnap in snapshot.children) {
                                             val transactionData = transactionSnap.getValue(TransactionModel::class.java)
                                             if (transactionData!!.stateTransaction!!) {
-                                                if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
                                                     transactionList.add(transactionData)
                                                     Log.d("TransactionFragment", "onDataChange: TRUE")
                                                 }
@@ -105,7 +105,7 @@ class TransactionFragment : Fragment() {
                                         for (transactionSnap in snapshot.children) {
                                             val transactionData = transactionSnap.getValue(TransactionModel::class.java)
                                             if (!transactionData!!.stateTransaction!!) {
-                                                if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
                                                     transactionList.add(transactionData)
                                                     Log.d("TransactionFragment", "onDataChange: FALSE")
                                                 }
@@ -187,6 +187,7 @@ class TransactionFragment : Fragment() {
         val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
         binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
         totalRevenue = 0.0
+        totalTransaction = 0
     }
 
     private fun getTransactionData() {
@@ -224,7 +225,7 @@ class TransactionFragment : Fragment() {
                             for (transactionSnap in snapshot.children) {
                                 val transactionData = transactionSnap.getValue(TransactionModel::class.java)
                                 if (transactionData!!.stateTransaction!!) {
-                                    if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
                                         transactionList.add(transactionData)
                                         Log.d("TransactionFragment", "onDataChange: TRUE")
                                     }
@@ -235,7 +236,7 @@ class TransactionFragment : Fragment() {
                             for (transactionSnap in snapshot.children) {
                                 val transactionData = transactionSnap.getValue(TransactionModel::class.java)
                                 if (!transactionData!!.stateTransaction!!) {
-                                    if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
                                         transactionList.add(transactionData)
                                         Log.d("TransactionFragment", "onDataChange: FALSE")
                                     }
@@ -311,13 +312,14 @@ class TransactionFragment : Fragment() {
     private fun showTotalRevenue() {
         for (position in 0 until transactionList.size) {
             totalRevenue += transactionList[position].amountPayed!!
-            totaTransaction = transactionList.size
+            totalTransaction = transactionList.size
         }
         val localeID = Locale("in", "ID")
         val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
         binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
-        binding.tvTotalClient.text = resources.getString(R.string.total_transaction, totaTransaction.toString())
+        binding.tvTotalClient.text = resources.getString(R.string.total_transaction, totalTransaction.toString())
         totalRevenue = 0.0
+        totalTransaction = 0
     }
 
     private fun getRangeDate(rangeType: Int, month: Int) {

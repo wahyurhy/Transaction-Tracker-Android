@@ -18,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityAddTransactionBinding
+import com.wahyurhy.transactiontracker.notification.MonthlyCreateTransaction
 import com.wahyurhy.transactiontracker.utils.SELECT_PHONE_NUMBER
 import com.wahyurhy.transactiontracker.utils.setMaskingMoney
 import com.wahyurhy.transactiontracker.utils.setMaskingPhoneNumber
@@ -27,6 +28,8 @@ import java.util.*
 class AddTransactionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddTransactionBinding
+
+    private lateinit var broadcastReceiver: MonthlyCreateTransaction
 
     private lateinit var dbRef: DatabaseReference
     private lateinit var auth: FirebaseAuth
@@ -116,12 +119,14 @@ class AddTransactionActivity : AppCompatActivity() {
                     0.0
                 )
 
+                broadcastReceiver = MonthlyCreateTransaction(name, whatsApp, paymentAmount, date)
+
                 dbRef.child(transactionID).setValue(transaction)
                     .addOnCompleteListener {
                         showLoading(false)
                         Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
-                        Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT).show()
+                        broadcastReceiver.setMonthlyNotification(this)
                         finish()
                     }.addOnFailureListener { err ->
                         showLoading(false)
