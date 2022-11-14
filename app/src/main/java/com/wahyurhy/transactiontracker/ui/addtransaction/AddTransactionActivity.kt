@@ -89,52 +89,63 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun saveTransactionData() {
         showLoading(true)
-        val name = binding.edName.text.toString().trim()
-        whatsApp = binding.edWhatsApp.text.toString().trim().replace("-", "")
-        val amount = binding.edAmount.text.toString().trim()
+        Thread(Runnable {
 
-        when {
-            name.isEmpty() -> binding.edName.error = "Please enter name"
-            amount.isEmpty() -> binding.edAmount.error = "Please enter amount"
-            else -> {
+            val name = binding.edName.text.toString().trim()
+            whatsApp = binding.edWhatsApp.text.toString().trim().replace("-", "")
+            val amount = binding.edAmount.text.toString().trim()
 
-                when {
-                    binding.edAmount.text.toString()[0] == 'R' -> paymentAmount = binding.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble()
-                }
+            when {
+                name.isEmpty() -> binding.edName.error = "Please enter name"
+                amount.isEmpty() -> binding.edAmount.error = "Please enter amount"
+                else -> {
 
-                val transactionID = dbRef.push().key!! + "0"
-
-                invertedDate = date * -1 //convert millis value to negative, so it can be sort as descending order
-
-                val transaction = TransactionModel(
-                    transactionID,
-                    name,
-                    whatsApp,
-                    paymentAmount,
-                    date,
-                    false,
-                    invertedDate,
-                    paymentAmount,
-                    0.0,
-                    0.0
-                )
-
-                broadcastReceiver = MonthlyCreateTransaction(transactionID.dropLast(1), name, whatsApp, paymentAmount, date)
-
-                dbRef.child(transactionID).setValue(transaction)
-                    .addOnCompleteListener {
-                        showLoading(false)
-                        Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
-                        Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT).show()
-                        broadcastReceiver.setMonthlyNotification(this)
-                        finish()
-                    }.addOnFailureListener { err ->
-                        showLoading(false)
-                        Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_SHORT).show()
+                    when {
+                        binding.edAmount.text.toString()[0] == 'R' -> paymentAmount = binding.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble()
                     }
-                isSubmitted = true
+
+                    val transactionID = dbRef.push().key!! + "0"
+
+                    invertedDate = date * -1 //convert millis value to negative, so it can be sort as descending order
+
+                    val transaction = TransactionModel(
+                        transactionID,
+                        name,
+                        whatsApp,
+                        paymentAmount,
+                        date,
+                        false,
+                        invertedDate,
+                        paymentAmount,
+                        0.0,
+                        0.0
+                    )
+
+                    broadcastReceiver = MonthlyCreateTransaction(transactionID.dropLast(1), name, whatsApp, paymentAmount, date)
+
+                    dbRef.child(transactionID).setValue(transaction)
+                        .addOnCompleteListener {
+                            Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
+
+                            broadcastReceiver.setMonthlyNotification(this)
+
+                            runOnUiThread( Runnable {
+                                Log.d("AddTransactionActivity", "saveTransactionData: runOnUiThread")
+                                Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT).show()
+                            })
+                            finish()
+                        }.addOnFailureListener { err ->
+                            runOnUiThread( Runnable {
+                                showLoading(false)
+                                Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_SHORT).show()
+                            })
+                        }
+                    isSubmitted = true
+                }
             }
-        }
+
+        }).start()
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

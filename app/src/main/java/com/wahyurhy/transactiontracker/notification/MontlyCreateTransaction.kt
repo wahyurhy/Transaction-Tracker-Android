@@ -63,36 +63,40 @@ class MonthlyCreateTransaction(
             dbRef = FirebaseDatabase.getInstance().getReference(uid)
         }
 
-        for (i in 1..12) {
-            val transactionID = transactionID + i
+        Thread(Runnable {
+            for (i in 1..12) {
+                val transactionID = transactionID + i
 
-            val plusOneMonth = 2629800000 * i
-            val nextMonth = date + plusOneMonth
+                val plusOneMonth = 2629800000 * i
+                val nextMonth = date + plusOneMonth
 
-            val invertedDate = nextMonth * -1
+                val invertedDate = nextMonth * -1
 
-            val transaction = TransactionModel(
-                transactionID,
-                name,
-                whatsApp,
-                paymentAmount,
-                nextMonth,
-                false,
-                invertedDate,
-                paymentAmount,
-                0.0,
-                0.0
-            )
+                val transaction = TransactionModel(
+                    transactionID,
+                    name,
+                    whatsApp,
+                    paymentAmount,
+                    nextMonth,
+                    false,
+                    invertedDate,
+                    paymentAmount,
+                    0.0,
+                    0.0
+                )
 
-            dbRef.child(transactionID).setValue(transaction)
-        }
+                dbRef.child(transactionID).setValue(transaction)
+            }
+        }).start()
 
-            alarmManager.setInexactRepeating(
-                AlarmManager.RTC_WAKEUP,
-                thenTime,
-                AlarmManager.INTERVAL_DAY + 365,
-                pendingIntent
-            )
+
+
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            thenTime,
+            AlarmManager.INTERVAL_DAY + 365,
+            pendingIntent
+        )
 
 //        Toast.makeText(context, "Monthly Notification ON", Toast.LENGTH_SHORT).show()
     }
