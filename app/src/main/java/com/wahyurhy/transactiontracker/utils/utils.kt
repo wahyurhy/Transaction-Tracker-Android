@@ -10,8 +10,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 val now: Long = System.currentTimeMillis()
-val sdf: SimpleDateFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
-val currentMonth: Date = Date(now)
+val sdf: SimpleDateFormat = SimpleDateFormat("yyyy", Locale.ENGLISH)
+val currentYear: Date = Date(now)
 
 fun EditText.setMaskingMoney(currencyText: String) {
     this.addTextChangedListener(object : MyTextWatcher {

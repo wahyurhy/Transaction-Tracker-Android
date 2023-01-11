@@ -126,14 +126,14 @@ class AddTransactionActivity : AppCompatActivity() {
                     dbRef.child(transactionID).setValue(transaction)
                         .addOnCompleteListener {
                             Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
-
+                            finish()
                             broadcastReceiver.setMonthlyNotification(this)
 
                             runOnUiThread( Runnable {
                                 Log.d("AddTransactionActivity", "saveTransactionData: runOnUiThread")
                                 Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT).show()
+
                             })
-                            finish()
                         }.addOnFailureListener { err ->
                             runOnUiThread( Runnable {
                                 showLoading(false)

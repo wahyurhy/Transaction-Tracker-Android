@@ -18,21 +18,10 @@
     <string name="joined_us_before">Sudah mendaftar?</string>
     <string name="verified_account">Akun Terverifikasi</string>
     <string name="unverified_account">Akun Belum Terverifikasi</string>
-    <string name="info_revenue">Pendapatan Bulan %1$s</string>
+    <string name="info_revenue">Pendapatan %1$s</string>
 
     <string-array name="filter_sort_by_periode">
-        <item>Januari</item>
-        <item>Februari</item>
-        <item>Maret</item>
-        <item>April</item>
-        <item>Mei</item>
-        <item>Juni</item>
-        <item>Juli</item>
-        <item>Agustus</item>
-        <item>September</item>
-        <item>Oktober</item>
-        <item>November</item>
-        <item>Desember</item>
+        <item>Tahun ini</item>
     </string-array>
 
     <string-array name="filter_sort_by_status">

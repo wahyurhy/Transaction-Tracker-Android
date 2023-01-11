@@ -27,9 +27,9 @@ class TransactionFragment : Fragment() {
 
     private val user = Firebase.auth.currentUser
     private lateinit var dbRef: DatabaseReference
-    private var selectedTimeSpan: String = sdf.format(currentMonth) // default month
+    private var selectedTimeSpan: String = sdf.format(currentYear) // default year
     private var selectedShowStatus: String = arrayOf(R.array.filter_sort_by_status)[0].toString() // default all time
-    private var getMonth: Int = 0
+    private var getYear: Int = 0
     private var dateStart: Long = 0
     private var dateEnd: Long = 0
     private var totalRevenue = 0.0
@@ -53,7 +53,7 @@ class TransactionFragment : Fragment() {
 
         showUserName()
 
-        setCurrentMonth()
+        setCurrentYear()
 
         visibilityOptions()
 
@@ -134,29 +134,25 @@ class TransactionFragment : Fragment() {
         }
     }
 
-    private fun setCurrentMonth() {
-        for (i in 0..11){
-            when (selectedTimeSpan) {
-                resources.getStringArray(R.array.filter_sort_by_periode)[i].toString() -> getMonth = i + 1
-            }
-            binding.timeShowSpinner.setSelection(getMonth - 1)
+    private fun setCurrentYear() {
+        when (selectedTimeSpan) {
+            resources.getStringArray(R.array.filter_sort_by_periode)[0].toString() -> getYear = 0 + 1
         }
+        binding.timeShowSpinner.setSelection(getYear - 1)
     }
 
     private fun visibilityOptions() {
         binding.timeShowSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    for (i in 0..11) {
-                        when (binding.timeShowSpinner.selectedItem) {
-                            resources.getStringArray(R.array.filter_sort_by_periode)[i].toString() -> {
-                                binding.tvDesc.text = getString(R.string.info_revenue, resources.getStringArray(R.array.filter_sort_by_periode)[i].toString())
-                                selectedTimeSpan = resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
-                                getRangeDate(Calendar.DAY_OF_MONTH, i)
-                            }
+                    when (binding.timeShowSpinner.selectedItem) {
+                        resources.getStringArray(R.array.filter_sort_by_periode)[0].toString() -> {
+                            binding.tvDesc.text = getString(R.string.info_revenue, resources.getStringArray(R.array.filter_sort_by_periode)[0].toString())
+                            selectedTimeSpan = resources.getStringArray(R.array.filter_sort_by_periode)[0].toString()
+                            getRangeDate(Calendar.YEAR, 0)
                         }
-                        getTransactionData()
-                        showEmptyRevenue()
                     }
+                    getTransactionData()
+                    showEmptyRevenue()
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
