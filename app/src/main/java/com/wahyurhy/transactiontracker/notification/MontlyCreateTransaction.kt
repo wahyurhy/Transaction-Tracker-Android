@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.ktx.auth
@@ -65,7 +66,15 @@ class MonthlyCreateTransaction(
 
         Thread(Runnable {
             for (i in 1..12) {
-                val transactionID = transactionID + i
+
+                var transactionID = transactionID + i
+
+                Log.d("out", transactionID)
+
+                if (i >= 10) {
+                    transactionID = this.transactionID + 9 + i
+                    Log.d("inif", transactionID)
+                }
 
                 val plusOneMonth = 2629800000 * i
                 val nextMonth = date + plusOneMonth

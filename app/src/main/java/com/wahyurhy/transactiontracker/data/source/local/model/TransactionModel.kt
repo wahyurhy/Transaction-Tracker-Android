@@ -1,14 +1,15 @@
 package com.wahyurhy.transactiontracker.data.source.local.model
 
-import androidx.annotation.NonNull
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "transaction")
 data class TransactionModel(
     @PrimaryKey(autoGenerate = false)
-    @NonNull
     @ColumnInfo(name = "id")
     var id: String? = null,
 
@@ -38,4 +39,4 @@ data class TransactionModel(
 
     @ColumnInfo(name = "amountPayed")
     var amountPayed: Double? = null
-)
+) : Parcelable

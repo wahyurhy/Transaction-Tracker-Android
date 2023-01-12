@@ -126,7 +126,7 @@ class AddTransactionActivity : AppCompatActivity() {
                     dbRef.child(transactionID).setValue(transaction)
                         .addOnCompleteListener {
                             Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
-                            finish()
+                            onBackPressed()
                             broadcastReceiver.setMonthlyNotification(this)
 
                             runOnUiThread( Runnable {

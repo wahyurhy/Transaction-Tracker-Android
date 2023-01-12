@@ -28,7 +28,8 @@ class TransactionFragment : Fragment() {
     private val user = Firebase.auth.currentUser
     private lateinit var dbRef: DatabaseReference
     private var selectedTimeSpan: String = sdf.format(currentYear) // default year
-    private var selectedShowStatus: String = arrayOf(R.array.filter_sort_by_status)[0].toString() // default all time
+    private var selectedShowStatus: String =
+        arrayOf(R.array.filter_sort_by_status)[0].toString() // default all time
     private var getYear: Int = 0
     private var dateStart: Long = 0
     private var dateEnd: Long = 0
@@ -84,30 +85,39 @@ class TransactionFragment : Fragment() {
                                 when (selectedShowStatus) {
                                     resources.getStringArray(R.array.filter_sort_by_status)[0].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            val transactionData = transactionSnap.getValue(TransactionModel::class.java)
-                                            if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                            val transactionData =
+                                                transactionSnap.getValue(TransactionModel::class.java)
+                                            if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
                                                 transactionList.add(transactionData)
                                             }
                                         }
                                     }
                                     resources.getStringArray(R.array.filter_sort_by_status)[1].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            val transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            val transactionData =
+                                                transactionSnap.getValue(TransactionModel::class.java)
                                             if (transactionData!!.stateTransaction!!) {
-                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
                                                     transactionList.add(transactionData)
-                                                    Log.d("TransactionFragment", "onDataChange: TRUE")
+                                                    Log.d(
+                                                        "TransactionFragment",
+                                                        "onDataChange: TRUE"
+                                                    )
                                                 }
                                             }
                                         }
                                     }
                                     resources.getStringArray(R.array.filter_sort_by_status)[2].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            val transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            val transactionData =
+                                                transactionSnap.getValue(TransactionModel::class.java)
                                             if (!transactionData!!.stateTransaction!!) {
-                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
                                                     transactionList.add(transactionData)
-                                                    Log.d("TransactionFragment", "onDataChange: FALSE")
+                                                    Log.d(
+                                                        "TransactionFragment",
+                                                        "onDataChange: FALSE"
+                                                    )
                                                 }
                                             }
                                         }
@@ -136,18 +146,24 @@ class TransactionFragment : Fragment() {
 
     private fun setCurrentYear() {
         when (selectedTimeSpan) {
-            resources.getStringArray(R.array.filter_sort_by_periode)[0].toString() -> getYear = 0 + 1
+            resources.getStringArray(R.array.filter_sort_by_periode)[0].toString() -> getYear =
+                0 + 1
         }
         binding.timeShowSpinner.setSelection(getYear - 1)
     }
 
     private fun visibilityOptions() {
-        binding.timeShowSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.timeShowSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                     when (binding.timeShowSpinner.selectedItem) {
                         resources.getStringArray(R.array.filter_sort_by_periode)[0].toString() -> {
-                            binding.tvDesc.text = getString(R.string.info_revenue, resources.getStringArray(R.array.filter_sort_by_periode)[0].toString())
-                            selectedTimeSpan = resources.getStringArray(R.array.filter_sort_by_periode)[0].toString()
+                            binding.tvDesc.text = getString(
+                                R.string.info_revenue,
+                                resources.getStringArray(R.array.filter_sort_by_periode)[0].toString()
+                            )
+                            selectedTimeSpan =
+                                resources.getStringArray(R.array.filter_sort_by_periode)[0].toString()
                             getRangeDate(Calendar.YEAR, 0)
                         }
                     }
@@ -160,22 +176,24 @@ class TransactionFragment : Fragment() {
                 }
             }
 
-        binding.typeShowSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                for (i in 0..2) {
-                    when (binding.typeShowSpinner.selectedItem) {
-                        resources.getStringArray(R.array.filter_sort_by_status)[i].toString() -> {
-                            selectedShowStatus = resources.getStringArray(R.array.filter_sort_by_status)[i].toString()
+        binding.typeShowSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    for (i in 0..2) {
+                        when (binding.typeShowSpinner.selectedItem) {
+                            resources.getStringArray(R.array.filter_sort_by_status)[i].toString() -> {
+                                selectedShowStatus =
+                                    resources.getStringArray(R.array.filter_sort_by_status)[i].toString()
+                            }
                         }
+                        getTransactionData()
                     }
-                    getTransactionData()
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
                 }
             }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
-        }
     }
 
     private fun showEmptyRevenue() {
@@ -211,17 +229,19 @@ class TransactionFragment : Fragment() {
                     when (selectedShowStatus) {
                         resources.getStringArray(R.array.filter_sort_by_status)[0].toString() -> {
                             for (transactionSnap in snapshot.children) {
-                                val transactionData = transactionSnap.getValue(TransactionModel::class.java)
-                                if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                val transactionData =
+                                    transactionSnap.getValue(TransactionModel::class.java)
+                                if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
                                     transactionList.add(transactionData)
                                 }
                             }
                         }
                         resources.getStringArray(R.array.filter_sort_by_status)[1].toString() -> {
                             for (transactionSnap in snapshot.children) {
-                                val transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                val transactionData =
+                                    transactionSnap.getValue(TransactionModel::class.java)
                                 if (transactionData!!.stateTransaction!!) {
-                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
                                         transactionList.add(transactionData)
                                         Log.d("TransactionFragment", "onDataChange: TRUE")
                                     }
@@ -230,9 +250,10 @@ class TransactionFragment : Fragment() {
                         }
                         resources.getStringArray(R.array.filter_sort_by_status)[2].toString() -> {
                             for (transactionSnap in snapshot.children) {
-                                val transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                val transactionData =
+                                    transactionSnap.getValue(TransactionModel::class.java)
                                 if (!transactionData!!.stateTransaction!!) {
-                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd){
+                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
                                         transactionList.add(transactionData)
                                         Log.d("TransactionFragment", "onDataChange: FALSE")
                                     }
@@ -246,7 +267,11 @@ class TransactionFragment : Fragment() {
                             noDataImage.visibility = View.VISIBLE
                             tvNoDataTitle.visibility = View.VISIBLE
                             visibilityNoData.visibility = View.VISIBLE
-                            visibilityNoData.text = resources.getString(R.string.visibility_no_data_info, selectedShowStatus, selectedTimeSpan)
+                            visibilityNoData.text = resources.getString(
+                                R.string.visibility_no_data_info,
+                                selectedShowStatus,
+                                selectedTimeSpan
+                            )
                         }
                     } else {
                         showInAdapter(true)
@@ -279,9 +304,12 @@ class TransactionFragment : Fragment() {
 
         binding.rvTransaction.adapter = mAdapter
 
-        mAdapter.setOnItemClickListener(object : TransactionAdapter.onItemClickListener{
+        mAdapter.setOnItemClickListener(object : TransactionAdapter.onItemClickListener {
             override fun onItemClick(position: Int) {
-                val intent = Intent(this@TransactionFragment.activity, TransactionDetailsActivity::class.java)
+                val intent = Intent(
+                    this@TransactionFragment.activity,
+                    TransactionDetailsActivity::class.java
+                )
 
                 intent.putExtra(TRANSACTION_ID_EXTRA, transactionList[position].id)
                 intent.putExtra(NAME_EXTRA, transactionList[position].name)
@@ -313,7 +341,8 @@ class TransactionFragment : Fragment() {
         val localeID = Locale("in", "ID")
         val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
         binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
-        binding.tvTotalClient.text = resources.getString(R.string.total_transaction, totalTransaction.toString())
+        binding.tvTotalClient.text =
+            resources.getString(R.string.total_transaction, totalTransaction.toString())
         totalRevenue = 0.0
         totalTransaction = 0
     }

@@ -6,15 +6,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.recyclerview.widget.ListAdapter
 
 class TransactionAdapter(private val transactionList: ArrayList<TransactionModel>) :
-    RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
+    ListAdapter<TransactionModel, TransactionAdapter.ViewHolder>(DiffCallback()) {
 
     private lateinit var mListener: onItemClickListener
 
@@ -76,5 +78,14 @@ class TransactionAdapter(private val transactionList: ArrayList<TransactionModel
                 clickListener.onItemClick(adapterPosition)
             }
         }
+    }
+
+    private class DiffCallback : DiffUtil.ItemCallback<TransactionModel>() {
+        override fun areItemsTheSame(oldItem: TransactionModel, newItem: TransactionModel): Boolean =
+            oldItem == newItem
+
+        override fun areContentsTheSame(oldItem: TransactionModel, newItem: TransactionModel): Boolean =
+            oldItem == newItem
+
     }
 }
