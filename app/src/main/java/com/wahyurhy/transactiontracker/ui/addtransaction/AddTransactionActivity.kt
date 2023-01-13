@@ -104,12 +104,13 @@ class AddTransactionActivity : AppCompatActivity() {
                         binding.edAmount.text.toString()[0] == 'R' -> paymentAmount = binding.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble()
                     }
 
-                    val transactionID = dbRef.push().key!! + "0"
+                    val transactionID = StringBuilder()
+                    transactionID.append(dbRef.push().key!! + "0")
 
                     invertedDate = date * -1 //convert millis value to negative, so it can be sort as descending order
 
                     val transaction = TransactionModel(
-                        transactionID,
+                        transactionID.toString(),
                         name,
                         whatsApp,
                         paymentAmount,
@@ -121,9 +122,9 @@ class AddTransactionActivity : AppCompatActivity() {
                         0.0
                     )
 
-                    broadcastReceiver = MonthlyCreateTransaction(transactionID.dropLast(1), name, whatsApp, paymentAmount, date)
+                    broadcastReceiver = MonthlyCreateTransaction(transactionID.toString().dropLast(1), name, whatsApp, paymentAmount, date)
 
-                    dbRef.child(transactionID).setValue(transaction)
+                    dbRef.child(transactionID.toString()).setValue(transaction)
                         .addOnCompleteListener {
                             Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
                             onBackPressed()

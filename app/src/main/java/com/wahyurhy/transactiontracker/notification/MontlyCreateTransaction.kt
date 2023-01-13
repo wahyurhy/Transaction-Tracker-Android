@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.ktx.auth
@@ -67,13 +66,15 @@ class MonthlyCreateTransaction(
         Thread(Runnable {
             for (i in 1..12) {
 
-                var transactionID = transactionID + i
-
-                Log.d("out", transactionID)
+                val transactionID = StringBuilder()
+                transactionID.append(this.transactionID)
+                transactionID.append(i)
 
                 if (i >= 10) {
-                    transactionID = this.transactionID + 9 + i
-                    Log.d("inif", transactionID)
+                    transactionID.setLength(0)
+                    transactionID.append(this.transactionID)
+                    transactionID.append(9)
+                    transactionID.append(i)
                 }
 
                 val plusOneMonth = 2629800000 * i
@@ -82,7 +83,7 @@ class MonthlyCreateTransaction(
                 val invertedDate = nextMonth * -1
 
                 val transaction = TransactionModel(
-                    transactionID,
+                    transactionID.toString(),
                     name,
                     whatsApp,
                     paymentAmount,
@@ -94,7 +95,7 @@ class MonthlyCreateTransaction(
                     0.0
                 )
 
-                dbRef.child(transactionID).setValue(transaction)
+                dbRef.child(transactionID.toString()).setValue(transaction)
             }
         }).start()
 
