@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.fragments.ProfileFragment">
+    tools:context=".ui.fragments.ProfileFragment"
+    tools:ignore="Overdraw">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -26,13 +27,15 @@
                     android:layout_height="115dp"
                     android:background="@color/blue"
                     android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingBottom="10dp"
+                    tools:ignore="UselessParent">
 
                     <LinearLayout
                         android:id="@+id/accountInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        tools:ignore="UselessParent">
 
                         <TextView
                             android:id="@+id/picture"

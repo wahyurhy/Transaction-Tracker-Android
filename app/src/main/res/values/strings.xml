@@ -1,13 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">Transaction Tracker</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="paid_off">Paid off</string>
     <string name="paid_yet">Paid yet</string>
-    <string name="tv_amount" translatable="false">Rp%1$d</string>
-    <string name="tv_number_of_revenue" translatable="false">Rp%1$d</string>
-    <string name="tv_username">Ha, %1$s!</string>
-    <string name="tv_desc">Income %1$s! %2$s</string>
     <string name="login">Login</string>
     <string name="email" translatable="false">Email</string>
     <string name="password">Password</string>
@@ -17,7 +12,6 @@
     <string name="not_a_member">Not a member?</string>
     <string name="register">Register</string>
     <string name="sign_up">Sign Up</string>
-    <string name="name">Name</string>
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="joined_us_before">Joined us before?</string>
@@ -27,12 +21,10 @@
     <string name="greetings_name">Hi, %1$s!</string>
     <string name="list_of_transactions">Transaction List</string>
     <string name="visibility_no_data_info">There is no %1$s data %2$s</string>
-    <string name="save">Save</string>
     <string name="update">Update</string>
     <string name="edit_data_title">Edit Data %1$s</string>
     <string name="no_transaction_yet">No Transaction Yet!</string>
     <string name="back">Back</string>
-    <string name="add_customer">Add Customer</string>
     <string name="name_hint">Name</string>
     <string name="whatsapp">WhatsApp</string>
     <string name="add_from_contact">Add from contact</string>
@@ -72,7 +64,6 @@
     <string name="confirmation">Are you sure?</string>
     <string name="confirmation_info">Do you want to delete this transaction?</string>
     <string name="yes_answer">Yes</string>
-    <string name="transaction_data_deleted">Transaction Data Deleted</string>
     <string name="no_answer">No</string>
     <string name="total_transaction">Total Transaction: %1$s</string>
     <string name="due_date_notification_content">%1$s is due</string>
