@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.firebase:firebase-database-ktx:20.0.6'
+    implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -63,14 +63,17 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     // Firebase
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.3.0'
-    implementation 'com.google.firebase:firebase-auth-ktx:21.0.8'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.2'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:30.4.1')
     // Also add the dependency for the Google Play services library and specify its version
-    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
 
     // Work Manager
     implementation 'androidx.work:work-runtime-ktx:2.7.0'
     implementation 'com.loopj.android:android-async-http:1.4.10'
+
+    // LeakCanary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 }

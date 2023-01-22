@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
@@ -19,6 +21,7 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityAddTransactionBinding
 import com.wahyurhy.transactiontracker.notification.MonthlyCreateTransaction
+import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.SELECT_PHONE_NUMBER
 import com.wahyurhy.transactiontracker.utils.setMaskingMoney
 import com.wahyurhy.transactiontracker.utils.setMaskingPhoneNumber
@@ -30,9 +33,12 @@ class AddTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTransactionBinding
 
     private lateinit var broadcastReceiver: MonthlyCreateTransaction
+    private var backgroundThread: HandlerThread? = null
+    private var backgroundHandler: Handler? = null
 
-    private lateinit var dbRef: DatabaseReference
-    private lateinit var auth: FirebaseAuth
+    private var dbRef: DatabaseReference? = null
+    private var auth: FirebaseAuth? = null
+    private var completeListener: DatabaseReference.CompletionListener? = null
 
     private var isSubmitted: Boolean = false
     private var date: Long = 0
@@ -44,6 +50,10 @@ class AddTransactionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddTransactionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        backgroundThread = HandlerThread("BackgroundThread")
+        backgroundThread?.start()
+        backgroundHandler = Handler(backgroundThread!!.looper)
 
         binding.backBtn.setOnClickListener {
             finish()
@@ -89,8 +99,7 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun saveTransactionData() {
         showLoading(true)
-        Thread(Runnable {
-
+        backgroundHandler?.post {
             val name = binding.edName.text.toString().trim()
             whatsApp = binding.edWhatsApp.text.toString().trim().replace("-", "")
             val amount = binding.edAmount.text.toString().trim()
@@ -105,7 +114,7 @@ class AddTransactionActivity : AppCompatActivity() {
                     }
 
                     val transactionID = StringBuilder()
-                    transactionID.append(dbRef.push().key!! + "0")
+                    transactionID.append(dbRef?.push()?.key!! + "0")
 
                     invertedDate = date * -1 //convert millis value to negative, so it can be sort as descending order
 
@@ -124,28 +133,29 @@ class AddTransactionActivity : AppCompatActivity() {
 
                     broadcastReceiver = MonthlyCreateTransaction(transactionID.toString().dropLast(1), name, whatsApp, paymentAmount, date)
 
-                    dbRef.child(transactionID.toString()).setValue(transaction)
-                        .addOnCompleteListener {
-                            Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
-                            onBackPressed()
-                            broadcastReceiver.setMonthlyNotification(this)
-
-                            runOnUiThread( Runnable {
-                                Log.d("AddTransactionActivity", "saveTransactionData: runOnUiThread")
-                                Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT).show()
-
-                            })
-                        }.addOnFailureListener { err ->
-                            runOnUiThread( Runnable {
-                                showLoading(false)
-                                Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_SHORT).show()
-                            })
-                        }
-                    isSubmitted = true
+                    if (dbRef != null) {
+                        completeListener =
+                            DatabaseReference.CompletionListener { databaseError, _ ->
+                                if (databaseError == null) {
+                                    // code yang akan dijalankan jika tidak terjadi error
+                                    Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
+                                    broadcastReceiver.setMonthlyNotification(this)
+                                    message = getString(R.string.data_inserted_success)
+                                    finish()
+                                } else {
+                                    Log.e("AddTransactionActivity", "saveTransactionData: Error: ${databaseError.message}")
+                                    runOnUiThread {
+                                        showLoading(false)
+                                        Toast.makeText(this, "Error ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        dbRef!!.child(transactionID.toString()).setValue(transaction, completeListener)
+                        isSubmitted = true
+                    }
                 }
             }
-
-        }).start()
+        }
 
     }
 
@@ -206,5 +216,17 @@ class AddTransactionActivity : AppCompatActivity() {
             true -> binding.progressBar.visibility = View.VISIBLE
             false -> binding.progressBar.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        dbRef = null
+        auth = null
+        super.onDestroy()
+        Thread.interrupted()
+        backgroundThread?.quitSafely()
+    }
+
+    companion object {
+        var message: String = ""
     }
 }

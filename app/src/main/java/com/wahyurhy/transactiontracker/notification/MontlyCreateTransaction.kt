@@ -63,43 +63,7 @@ class MonthlyCreateTransaction(
             dbRef = FirebaseDatabase.getInstance().getReference(uid)
         }
 
-        Thread(Runnable {
-            for (i in 1..12) {
-
-                val transactionID = StringBuilder()
-                transactionID.append(this.transactionID)
-                transactionID.append(i)
-
-                if (i >= 10) {
-                    transactionID.setLength(0)
-                    transactionID.append(this.transactionID)
-                    transactionID.append(9)
-                    transactionID.append(i)
-                }
-
-                val plusOneMonth = 2629800000 * i
-                val nextMonth = date + plusOneMonth
-
-                val invertedDate = nextMonth * -1
-
-                val transaction = TransactionModel(
-                    transactionID.toString(),
-                    name,
-                    whatsApp,
-                    paymentAmount,
-                    nextMonth,
-                    false,
-                    invertedDate,
-                    paymentAmount,
-                    0.0,
-                    0.0
-                )
-
-                dbRef.child(transactionID.toString()).setValue(transaction)
-            }
-        }).start()
-
-
+        createMultiTransaction()
 
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
@@ -109,6 +73,42 @@ class MonthlyCreateTransaction(
         )
 
 //        Toast.makeText(context, "Monthly Notification ON", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun createMultiTransaction() {
+        for (i in 1..12) {
+
+            val transactionID = StringBuilder()
+            transactionID.append(this.transactionID)
+            transactionID.append(i)
+
+            if (i >= 10) {
+                transactionID.setLength(0)
+                transactionID.append(this.transactionID)
+                transactionID.append(9)
+                transactionID.append(i)
+            }
+
+            val plusOneMonth = 2629800000 * i
+            val nextMonth = date + plusOneMonth
+
+            val invertedDate = nextMonth * -1
+
+            val transaction = TransactionModel(
+                transactionID.toString(),
+                name,
+                whatsApp,
+                paymentAmount,
+                nextMonth,
+                false,
+                invertedDate,
+                paymentAmount,
+                0.0,
+                0.0
+            )
+
+            dbRef.child(transactionID.toString()).setValue(transaction)
+        }
     }
 
     fun cancelAlarm(context: Context) {

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +18,9 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.adapter.TransactionAdapter
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
+import com.wahyurhy.transactiontracker.ui.addtransaction.AddTransactionActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
+import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.util.*
@@ -36,6 +39,8 @@ class TransactionFragment : Fragment() {
     private var totalRevenue = 0.0
     private var totalTransaction = 0
     private lateinit var transactionList: ArrayList<TransactionModel>
+    private lateinit var valueEventListener: ValueEventListener
+    private lateinit var query: Query
 
     private var _binding: FragmentTransactionBinding? = null
     private val binding get() = _binding!!
@@ -220,9 +225,9 @@ class TransactionFragment : Fragment() {
             dbRef = FirebaseDatabase.getInstance().getReference(uid)
         }
 
-        val query: Query = dbRef.orderByChild("dueDateTransaction")
+        query = dbRef.orderByChild("dueDateTransaction")
 
-        query.addValueEventListener(object : ValueEventListener {
+        valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 transactionList.clear()
                 if (snapshot.exists()) {
@@ -296,7 +301,9 @@ class TransactionFragment : Fragment() {
                 print("Listener was cancelled")
                 Log.d("TransactionFragment", "Listener was cancelled ${error.message}")
             }
-        })
+        }
+        query.addValueEventListener(valueEventListener)
+
     }
 
     private fun showInAdapter(showRevenue: Boolean) {
@@ -382,8 +389,17 @@ class TransactionFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
+        if (AddTransactionActivity.message != "") {
+            Toast.makeText(context, AddTransactionActivity.message, Toast.LENGTH_SHORT).show()
+            AddTransactionActivity.message = ""
+        }
+        query.removeEventListener(valueEventListener)
         getTransactionData()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        query.removeEventListener(valueEventListener)
     }
 
 
