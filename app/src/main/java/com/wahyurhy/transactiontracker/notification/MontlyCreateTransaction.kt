@@ -89,17 +89,21 @@ class MonthlyCreateTransaction(
                 transactionID.append(i)
             }
 
-            val plusOneMonth = 2629800000 * i
-            val nextMonth = date + plusOneMonth
+            val dateFromLong = Date(date)
 
-            val invertedDate = nextMonth * -1
+            val calendar = Calendar.getInstance()
+            calendar.time = dateFromLong
+            calendar.add(Calendar.MONTH, i)
+            val nextMonth = calendar.time
+
+            val invertedDate = nextMonth.time * -1
 
             val transaction = TransactionModel(
                 transactionID.toString(),
                 name,
                 whatsApp,
                 paymentAmount,
-                nextMonth,
+                nextMonth.time,
                 false,
                 invertedDate,
                 paymentAmount,
