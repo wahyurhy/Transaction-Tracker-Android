@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -21,7 +22,6 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityAddTransactionBinding
 import com.wahyurhy.transactiontracker.notification.MonthlyCreateTransaction
-import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.SELECT_PHONE_NUMBER
 import com.wahyurhy.transactiontracker.utils.setMaskingMoney
 import com.wahyurhy.transactiontracker.utils.setMaskingPhoneNumber
@@ -33,6 +33,10 @@ class AddTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTransactionBinding
 
     private lateinit var broadcastReceiver: MonthlyCreateTransaction
+    private var user: FirebaseUser? = null
+    private var uid: String? = null
+    private var sdf: SimpleDateFormat? = null
+    private var currentDate: Date? = null
     private var backgroundThread: HandlerThread? = null
     private var backgroundHandler: Handler? = null
 
@@ -71,16 +75,16 @@ class AddTransactionActivity : AppCompatActivity() {
             setText("")
         }
 
-        val user = Firebase.auth.currentUser
-        val uid = user?.uid
+        user = Firebase.auth.currentUser
+        uid = user?.uid
         if (uid != null) {
-            dbRef = FirebaseDatabase.getInstance().getReference(uid)
+            dbRef = FirebaseDatabase.getInstance().getReference(uid!!)
         }
         auth = Firebase.auth
 
         // --- data picker ---
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-        val currentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
+        sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+        currentDate = sdf?.parse(sdf?.format(System.currentTimeMillis()).toString())
         date = currentDate!!.time
         binding.edDate.setOnClickListener {
             clickDatePicker()
@@ -219,8 +223,6 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        dbRef = null
-        auth = null
         super.onDestroy()
         Thread.interrupted()
         backgroundThread?.quitSafely()

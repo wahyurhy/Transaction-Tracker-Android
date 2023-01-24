@@ -22,6 +22,7 @@ import com.wahyurhy.transactiontracker.ui.addtransaction.AddTransactionActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -32,11 +33,11 @@ class TransactionFragment : Fragment() {
     private var selectedTimeSpan: String = sdf.format(currentYear) // default year
     private var selectedShowStatus: String =
         arrayOf(R.array.filter_sort_by_status)[0].toString() // default all time
+    private var year: String? = ""
     private var getYear: Int = 0
-    private var dateStart: Long = 0
-    private var dateEnd: Long = 0
     private var totalRevenue = 0.0
     private var totalTransaction = 0
+    private var selectedYear = ""
     private var isSearched = false
     private val searchText = StringBuilder()
     private lateinit var transactionList: ArrayList<TransactionModel>
@@ -44,6 +45,15 @@ class TransactionFragment : Fragment() {
     private lateinit var valueEventListenerSearch: ValueEventListener
     private lateinit var queryGetTransactionData: Query
     private lateinit var querySearch: Query
+    private var transactionData: TransactionModel? = null
+    private var calendar: Calendar? = null
+    private var dateFormat: SimpleDateFormat? = null
+    private var localeID: Locale? = null
+    private var formatRupiah: NumberFormat? = null
+    private var email: String? = null
+    private var username: String? = null
+    private var name: String? = null
+    private var splitValue: List<String>? = null
 
     private var _binding: FragmentTransactionBinding? = null
     private val binding get() = _binding!!
@@ -59,6 +69,11 @@ class TransactionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        calendar = Calendar.getInstance()
+        dateFormat = SimpleDateFormat("yyyy", Locale.getDefault())
+        localeID = Locale("in", "ID")
+        formatRupiah = NumberFormat.getCurrencyInstance(localeID!!)
 
         showUserName()
 
@@ -93,39 +108,43 @@ class TransactionFragment : Fragment() {
                                 when (selectedShowStatus) {
                                     resources.getStringArray(R.array.filter_sort_by_status)[0].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            val transactionData =
-                                                transactionSnap.getValue(TransactionModel::class.java)
-                                            if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
-                                                transactionList.add(transactionData)
+                                            transactionData = transactionSnap.getValue(TransactionModel::class.java)
+
+                                            calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+
+                                            year = dateFormat?.format(calendar!!.time)
+
+                                            if (year == selectedYear) {
+                                                transactionList.add(transactionData!!)
                                             }
                                         }
                                     }
                                     resources.getStringArray(R.array.filter_sort_by_status)[1].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            val transactionData =
-                                                transactionSnap.getValue(TransactionModel::class.java)
+                                            transactionData = transactionSnap.getValue(TransactionModel::class.java)
+
+                                            calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+
+                                            year = dateFormat?.format(calendar!!.time)
+
                                             if (transactionData!!.stateTransaction!!) {
-                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
-                                                    transactionList.add(transactionData)
-                                                    Log.d(
-                                                        "TransactionFragment",
-                                                        "onDataChange: TRUE"
-                                                    )
+                                                if (year == selectedYear) {
+                                                    transactionList.add(transactionData!!)
                                                 }
                                             }
                                         }
                                     }
                                     resources.getStringArray(R.array.filter_sort_by_status)[2].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            val transactionData =
-                                                transactionSnap.getValue(TransactionModel::class.java)
+                                            transactionData = transactionSnap.getValue(TransactionModel::class.java)
+
+                                            calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+
+                                            val year = dateFormat?.format(calendar!!.time)
+
                                             if (!transactionData!!.stateTransaction!!) {
-                                                if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
-                                                    transactionList.add(transactionData)
-                                                    Log.d(
-                                                        "TransactionFragment",
-                                                        "onDataChange: FALSE"
-                                                    )
+                                                if (year == selectedYear) {
+                                                    transactionList.add(transactionData!!)
                                                 }
                                             }
                                         }
@@ -162,30 +181,29 @@ class TransactionFragment : Fragment() {
     }
 
     private fun setCurrentYear() {
-        when (selectedTimeSpan) {
-            resources.getStringArray(R.array.filter_sort_by_periode)[0].toString() -> getYear =
-                0 + 1
+        for (i in 0..11){
+            when (selectedTimeSpan) {
+                resources.getStringArray(R.array.filter_sort_by_periode)[i].toString() -> getYear = i + 1
+            }
+            binding.timeShowSpinner.setSelection(getYear - 1)
         }
-        binding.timeShowSpinner.setSelection(getYear - 1)
     }
 
     private fun visibilityOptions() {
         binding.timeShowSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    when (binding.timeShowSpinner.selectedItem) {
-                        resources.getStringArray(R.array.filter_sort_by_periode)[0].toString() -> {
-                            binding.tvDesc.text = getString(
-                                R.string.info_revenue,
-                                resources.getStringArray(R.array.filter_sort_by_periode)[0].toString()
-                            )
-                            selectedTimeSpan =
-                                resources.getStringArray(R.array.filter_sort_by_periode)[0].toString()
-                            getRangeDate(Calendar.YEAR, 0)
+                    for (i in 0..11) {
+                        when (binding.timeShowSpinner.selectedItem) {
+                            resources.getStringArray(R.array.filter_sort_by_periode)[i].toString() -> {
+                                binding.tvDesc.text = getString(R.string.info_revenue, resources.getStringArray(R.array.filter_sort_by_periode)[i].toString())
+                                selectedTimeSpan = resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
+                                selectedYear = resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
+                            }
                         }
+                        getTransactionData()
+                        showEmptyRevenue()
                     }
-                    getTransactionData()
-                    showEmptyRevenue()
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -214,9 +232,7 @@ class TransactionFragment : Fragment() {
     }
 
     private fun showEmptyRevenue() {
-        val localeID = Locale("in", "ID")
-        val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
-        binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
+        binding.numberOfRevenue.text = formatRupiah?.format(totalRevenue)?.replace(",00", "")
         totalRevenue = 0.0
         totalTransaction = 0
     }
@@ -246,33 +262,46 @@ class TransactionFragment : Fragment() {
                     when (selectedShowStatus) {
                         resources.getStringArray(R.array.filter_sort_by_status)[0].toString() -> {
                             for (transactionSnap in snapshot.children) {
-                                val transactionData =
+                                transactionData =
                                     transactionSnap.getValue(TransactionModel::class.java)
-                                if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
-                                    transactionList.add(transactionData)
+
+                                calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+
+                                year = dateFormat?.format(calendar!!.time)
+
+                                if (year == selectedYear) {
+                                    transactionList.add(transactionData!!)
                                 }
                             }
                         }
                         resources.getStringArray(R.array.filter_sort_by_status)[1].toString() -> {
                             for (transactionSnap in snapshot.children) {
-                                val transactionData =
+                                transactionData =
                                     transactionSnap.getValue(TransactionModel::class.java)
+
+                                calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+
+                                year = dateFormat?.format(calendar!!.time)
+
                                 if (transactionData!!.stateTransaction!!) {
-                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
-                                        transactionList.add(transactionData)
-                                        Log.d("TransactionFragment", "onDataChange: TRUE")
+                                    if (year == selectedYear) {
+                                        transactionList.add(transactionData!!)
                                     }
                                 }
                             }
                         }
                         resources.getStringArray(R.array.filter_sort_by_status)[2].toString() -> {
                             for (transactionSnap in snapshot.children) {
-                                val transactionData =
+                                transactionData =
                                     transactionSnap.getValue(TransactionModel::class.java)
+
+                                calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+
+                                year = dateFormat?.format(calendar!!.time)
+
                                 if (!transactionData!!.stateTransaction!!) {
-                                    if (transactionData.dueDateTransaction!! > dateStart - 86400000 && transactionData.dueDateTransaction!! <= dateEnd) {
-                                        transactionList.add(transactionData)
-                                        Log.d("TransactionFragment", "onDataChange: FALSE")
+                                    if (year == selectedYear) {
+                                        transactionList.add(transactionData!!)
                                     }
                                 }
                             }
@@ -357,40 +386,22 @@ class TransactionFragment : Fragment() {
             totalRevenue += transactionList[position].amountPayed!!
             totalTransaction = transactionList.size
         }
-        val localeID = Locale("in", "ID")
-        val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
-        binding.numberOfRevenue.text = formatRupiah.format(totalRevenue).replace(",00", "")
+
+        binding.numberOfRevenue.text = formatRupiah?.format(totalRevenue)?.replace(",00", "")
         binding.tvTotalClient.text =
             resources.getString(R.string.total_transaction, totalTransaction.toString())
         totalRevenue = 0.0
         totalTransaction = 0
     }
 
-    private fun getRangeDate(rangeType: Int, month: Int) {
-        val currentDate = Date()
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-        val cal: Calendar = Calendar.getInstance(TimeZone.getDefault())
-        cal.time = currentDate
-
-        val startDay = cal.getActualMinimum(rangeType)
-        cal.set(currentYear, month, startDay)
-        val startDate = cal.time
-        dateStart = startDate.time
-
-        val endDay = cal.getActualMaximum(rangeType)
-        cal.set(currentYear, month, endDay)
-        val endDate = cal.time
-        dateEnd = endDate.time
-    }
-
     private fun showUserName() {
         user?.reload()
 
-        val email = user!!.email
-        val username = user.displayName
+        email = user!!.email
+        username = user.displayName
 
-        val name = if (username == null || username == "") {
-            val splitValue = email?.split("@")
+        name = if (username == null || username == "") {
+            splitValue = email?.split("@")
             splitValue?.get(0).toString()
         } else {
             username
@@ -422,6 +433,15 @@ class TransactionFragment : Fragment() {
         }
         dbRef.removeEventListener(valueEventListenerGetTransactionData)
         queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
+        transactionData = null
+        calendar = null
+        dateFormat = null
+        localeID = null
+        formatRupiah = null
+        email = null
+        username = null
+        name = null
+        splitValue = null
     }
 
 

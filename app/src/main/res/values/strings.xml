@@ -70,7 +70,18 @@
     <string name="notif_today_due_date_title">Today\'s Due Date</string>
 
     <string-array name="filter_sort_by_periode">
-        <item>This year</item>
+        <item>2022</item>
+        <item>2023</item>
+        <item>2024</item>
+        <item>2025</item>
+        <item>2026</item>
+        <item>2027</item>
+        <item>2028</item>
+        <item>2029</item>
+        <item>2030</item>
+        <item>2031</item>
+        <item>2032</item>
+        <item>2033</item>
     </string-array>
 
     <string-array name="filter_sort_by_status">
