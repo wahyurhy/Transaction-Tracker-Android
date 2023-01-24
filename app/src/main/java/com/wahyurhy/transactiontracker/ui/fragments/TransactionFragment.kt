@@ -20,7 +20,6 @@ import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
 import com.wahyurhy.transactiontracker.ui.addtransaction.AddTransactionActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
-import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.util.*
@@ -38,9 +37,13 @@ class TransactionFragment : Fragment() {
     private var dateEnd: Long = 0
     private var totalRevenue = 0.0
     private var totalTransaction = 0
+    private var isSearched = false
+    private val searchText = StringBuilder()
     private lateinit var transactionList: ArrayList<TransactionModel>
-    private lateinit var valueEventListener: ValueEventListener
-    private lateinit var query: Query
+    private lateinit var valueEventListenerGetTransactionData: ValueEventListener
+    private lateinit var valueEventListenerSearch: ValueEventListener
+    private lateinit var queryGetTransactionData: Query
+    private lateinit var querySearch: Query
 
     private var _binding: FragmentTransactionBinding? = null
     private val binding get() = _binding!!
@@ -82,8 +85,8 @@ class TransactionFragment : Fragment() {
                     if (uid != null) {
                         dbRef = FirebaseDatabase.getInstance().getReference(uid)
                     }
-                    val query: Query = dbRef.orderByChild("name").startAt(newText)
-                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                    valueEventListenerSearch = object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             transactionList.clear()
                             if (snapshot.exists()) {
@@ -135,7 +138,11 @@ class TransactionFragment : Fragment() {
                         override fun onCancelled(error: DatabaseError) {
                             TODO("Not yet implemented")
                         }
-                    })
+                    }
+
+                    getSearchData(newText)
+                    searchText.replace(0, searchText.length, newText)
+                    isSearched = true
                 } else {
                     getTransactionData()
                 }
@@ -147,6 +154,11 @@ class TransactionFragment : Fragment() {
             getTransactionData()
             binding.swipeRefresh.isRefreshing = false
         }
+    }
+
+    private fun getSearchData(text: String) {
+        querySearch = dbRef.orderByChild("name").startAt(text)
+        querySearch.addListenerForSingleValueEvent(valueEventListenerSearch)
     }
 
     private fun setCurrentYear() {
@@ -225,9 +237,9 @@ class TransactionFragment : Fragment() {
             dbRef = FirebaseDatabase.getInstance().getReference(uid)
         }
 
-        query = dbRef.orderByChild("dueDateTransaction")
+        queryGetTransactionData = dbRef.orderByChild("dueDateTransaction")
 
-        valueEventListener = object : ValueEventListener {
+        valueEventListenerGetTransactionData = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 transactionList.clear()
                 if (snapshot.exists()) {
@@ -302,7 +314,7 @@ class TransactionFragment : Fragment() {
                 Log.d("TransactionFragment", "Listener was cancelled ${error.message}")
             }
         }
-        query.addValueEventListener(valueEventListener)
+        queryGetTransactionData.addValueEventListener(valueEventListenerGetTransactionData)
 
     }
 
@@ -393,13 +405,23 @@ class TransactionFragment : Fragment() {
             Toast.makeText(context, AddTransactionActivity.message, Toast.LENGTH_SHORT).show()
             AddTransactionActivity.message = ""
         }
-        query.removeEventListener(valueEventListener)
-        getTransactionData()
+        dbRef.removeEventListener(valueEventListenerGetTransactionData)
+        queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
+        if (isSearched) {
+            querySearch.removeEventListener(valueEventListenerSearch)
+            getSearchData(searchText.toString())
+        } else {
+            getTransactionData()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        query.removeEventListener(valueEventListener)
+        if (isSearched) {
+            querySearch.removeEventListener(valueEventListenerSearch)
+        }
+        dbRef.removeEventListener(valueEventListenerGetTransactionData)
+        queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
     }
 
 
