@@ -26,6 +26,11 @@ class MonthlyCreateTransaction(
 ) : BroadcastReceiver() {
 
     private lateinit var dbRef: DatabaseReference
+    private lateinit var transactionIDMonthly: StringBuilder
+    private lateinit var dateFromLong: Date
+    private lateinit var calendar: Calendar
+    private lateinit var nextMonth: Date
+    private lateinit var transaction: TransactionModel
 
     override fun onReceive(context: Context, intent: Intent) {
         executeThread {
@@ -76,30 +81,30 @@ class MonthlyCreateTransaction(
     }
 
     private fun createMultiTransaction() {
+        transactionIDMonthly = StringBuilder()
+        dateFromLong = Date(date)
+        calendar = Calendar.getInstance()
+        var invertedDate: Long
         for (i in 1..12) {
 
-            val transactionID = StringBuilder()
-            transactionID.append(this.transactionID)
-            transactionID.append(i)
+            transactionIDMonthly.append(this.transactionID)
+            transactionIDMonthly.append(i)
 
             if (i >= 10) {
-                transactionID.setLength(0)
-                transactionID.append(this.transactionID)
-                transactionID.append(9)
-                transactionID.append(i)
+                transactionIDMonthly.setLength(0)
+                transactionIDMonthly.append(this.transactionID)
+                transactionIDMonthly.append(9)
+                transactionIDMonthly.append(i)
             }
 
-            val dateFromLong = Date(date)
-
-            val calendar = Calendar.getInstance()
             calendar.time = dateFromLong
             calendar.add(Calendar.MONTH, i)
-            val nextMonth = calendar.time
+            nextMonth = calendar.time
 
-            val invertedDate = nextMonth.time * -1
+            invertedDate = nextMonth.time * -1
 
-            val transaction = TransactionModel(
-                transactionID.toString(),
+            transaction = TransactionModel(
+                transactionIDMonthly.toString(),
                 name,
                 whatsApp,
                 paymentAmount,
@@ -111,7 +116,7 @@ class MonthlyCreateTransaction(
                 0.0
             )
 
-            dbRef.child(transactionID.toString()).setValue(transaction)
+            dbRef.child(transactionIDMonthly.toString()).setValue(transaction)
         }
     }
 
