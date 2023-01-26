@@ -87,6 +87,7 @@ class MonthlyCreateTransaction(
         var invertedDate: Long
         for (i in 1..12) {
 
+            transactionIDMonthly.setLength(0)
             transactionIDMonthly.append(this.transactionID)
             transactionIDMonthly.append(i)
 

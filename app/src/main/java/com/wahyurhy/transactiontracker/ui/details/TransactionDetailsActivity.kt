@@ -116,8 +116,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
         val uid = user?.uid
         if (uid != null) {
             for (i in lastCharOfTransactionID..12) {
-                val dbRef = FirebaseDatabase.getInstance().getReference(uid).child(dropLastOfTransactionID + i.toString())
-                dbRef.removeValue()
+                if (i > 9) {
+                    val dbRef = FirebaseDatabase.getInstance().getReference(uid).child(dropLastOfTransactionID + 9 + i.toString())
+                    dbRef.removeValue()
+                } else {
+                    val dbRef = FirebaseDatabase.getInstance().getReference(uid).child(dropLastOfTransactionID + i.toString())
+                    dbRef.removeValue()
+                }
+
             }
         }
         finish()
