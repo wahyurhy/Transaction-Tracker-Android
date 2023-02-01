@@ -144,7 +144,7 @@ class AddTransactionActivity : AppCompatActivity() {
                                     // code yang akan dijalankan jika tidak terjadi error
                                     Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
                                     broadcastReceiver.setMonthlyNotification(this)
-                                    message = getString(R.string.data_inserted_success)
+                                    Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT).show()
                                     finish()
                                 } else {
                                     Log.e("AddTransactionActivity", "saveTransactionData: Error: ${databaseError.message}")
@@ -226,9 +226,5 @@ class AddTransactionActivity : AppCompatActivity() {
         super.onDestroy()
         Thread.interrupted()
         backgroundThread?.quitSafely()
-    }
-
-    companion object {
-        var message: String = ""
     }
 }

@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,12 +17,12 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.adapter.TransactionAdapter
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
-import com.wahyurhy.transactiontracker.ui.addtransaction.AddTransactionActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class TransactionFragment : Fragment() {
@@ -412,10 +411,6 @@ class TransactionFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (AddTransactionActivity.message != "") {
-            Toast.makeText(context, AddTransactionActivity.message, Toast.LENGTH_SHORT).show()
-            AddTransactionActivity.message = ""
-        }
         dbRef.removeEventListener(valueEventListenerGetTransactionData)
         queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
         if (isSearched) {
