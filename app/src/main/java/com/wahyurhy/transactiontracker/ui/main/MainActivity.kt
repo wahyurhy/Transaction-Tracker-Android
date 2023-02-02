@@ -15,24 +15,24 @@ class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
 
-    private var transactionFragment: TransactionFragment? = null
-    private var profileFragment: ProfileFragment? = null
+    private lateinit var transactionFragment: TransactionFragment
+    private lateinit var profileFragment: ProfileFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-        
+
         transactionFragment = TransactionFragment()
         profileFragment = ProfileFragment()
 
         binding.chipAppBar.setItemSelected(R.id.ic_transaction, true)
-        makeCurrentFragment(transactionFragment!!)
+        makeCurrentFragment(transactionFragment)
         binding.chipAppBar.setOnItemSelectedListener {
             when (it) {
-                R.id.ic_transaction -> makeCurrentFragment(transactionFragment!!)
-                R.id.ic_profile -> makeCurrentFragment(profileFragment!!)
+                R.id.ic_transaction -> makeCurrentFragment(transactionFragment)
+                R.id.ic_profile -> makeCurrentFragment(profileFragment)
             }
         }
     }
@@ -47,11 +47,5 @@ class MainActivity : AppCompatActivity() {
     fun floatingButton(view: View) {
         val intent = Intent(this@MainActivity, AddTransactionActivity::class.java)
         startActivity(intent)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        transactionFragment = null
-        profileFragment = null
     }
 }

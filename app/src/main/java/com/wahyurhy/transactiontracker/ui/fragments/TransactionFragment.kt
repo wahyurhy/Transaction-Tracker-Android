@@ -22,7 +22,6 @@ import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class TransactionFragment : Fragment() {
@@ -47,7 +46,6 @@ class TransactionFragment : Fragment() {
     private var transactionData: TransactionModel? = null
     private var calendar: Calendar? = null
     private var dateFormat: SimpleDateFormat? = null
-    private var localeID: Locale? = null
     private var formatRupiah: NumberFormat? = null
     private var email: String? = null
     private var username: String? = null
@@ -70,24 +68,27 @@ class TransactionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         calendar = Calendar.getInstance()
-        dateFormat = SimpleDateFormat("yyyy", Locale.getDefault())
-        localeID = Locale("in", "ID")
-        formatRupiah = NumberFormat.getCurrencyInstance(localeID!!)
+        dateFormat = SimpleDateFormat("yyyy", Locale("in", "ID"))
+        formatRupiah = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
 
         showUserName()
-
         setCurrentYear()
-
         visibilityOptions()
 
-        // -- Recycler View transaction items --
-        binding.rvTransaction.layoutManager = LinearLayoutManager(this.activity)
-        binding.rvTransaction.setHasFixedSize(true)
-
-        transactionList = arrayListOf()
-
+        initTransactionRecyclerView()
         getTransactionData()
+        setSearchBarListener()
+        setSwipeRefreshListener()
+    }
 
+    private fun setSwipeRefreshListener() {
+        binding.swipeRefresh.setOnRefreshListener {
+            getTransactionData()
+            binding.swipeRefresh.isRefreshing = false
+        }
+    }
+
+    private fun setSearchBarListener() {
         binding.searchBar.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -107,9 +108,11 @@ class TransactionFragment : Fragment() {
                                 when (selectedShowStatus) {
                                     resources.getStringArray(R.array.filter_sort_by_status)[0].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            transactionData =
+                                                transactionSnap.getValue(TransactionModel::class.java)
 
-                                            calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+                                            calendar?.timeInMillis =
+                                                transactionData!!.dueDateTransaction as Long
 
                                             year = dateFormat?.format(calendar!!.time)
 
@@ -120,9 +123,11 @@ class TransactionFragment : Fragment() {
                                     }
                                     resources.getStringArray(R.array.filter_sort_by_status)[1].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            transactionData =
+                                                transactionSnap.getValue(TransactionModel::class.java)
 
-                                            calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+                                            calendar?.timeInMillis =
+                                                transactionData!!.dueDateTransaction as Long
 
                                             year = dateFormat?.format(calendar!!.time)
 
@@ -135,9 +140,11 @@ class TransactionFragment : Fragment() {
                                     }
                                     resources.getStringArray(R.array.filter_sort_by_status)[2].toString() -> {
                                         for (transactionSnap in snapshot.children) {
-                                            transactionData = transactionSnap.getValue(TransactionModel::class.java)
+                                            transactionData =
+                                                transactionSnap.getValue(TransactionModel::class.java)
 
-                                            calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+                                            calendar?.timeInMillis =
+                                                transactionData!!.dueDateTransaction as Long
 
                                             val year = dateFormat?.format(calendar!!.time)
 
@@ -154,7 +161,7 @@ class TransactionFragment : Fragment() {
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
+                            throw Exception("Not yet implemented")
                         }
                     }
 
@@ -167,11 +174,13 @@ class TransactionFragment : Fragment() {
                 return true
             }
         })
+    }
 
-        binding.swipeRefresh.setOnRefreshListener {
-            getTransactionData()
-            binding.swipeRefresh.isRefreshing = false
-        }
+    private fun initTransactionRecyclerView() {
+        // -- Recycler View transaction items --
+        binding.rvTransaction.layoutManager = LinearLayoutManager(this.activity)
+        binding.rvTransaction.setHasFixedSize(true)
+        transactionList = arrayListOf()
     }
 
     private fun getSearchData(text: String) {
@@ -232,7 +241,6 @@ class TransactionFragment : Fragment() {
 
     private fun showEmptyRevenue() {
         binding.numberOfRevenue.text = formatRupiah?.format(totalRevenue)?.replace(",00", "")
-        totalRevenue = 0.0
         totalTransaction = 0
     }
 
@@ -343,7 +351,6 @@ class TransactionFragment : Fragment() {
             }
         }
         queryGetTransactionData.addValueEventListener(valueEventListenerGetTransactionData)
-
     }
 
     private fun showInAdapter(showRevenue: Boolean) {
@@ -381,15 +388,12 @@ class TransactionFragment : Fragment() {
     }
 
     private fun showTotalRevenue() {
-        for (position in 0 until transactionList.size) {
-            totalRevenue += transactionList[position].amountPayed!!
-            totalTransaction = transactionList.size
-        }
+        totalRevenue = transactionList.fold(0.0) { acc, amountPayed -> acc + amountPayed.amountPayed as Double }
+        totalTransaction = transactionList.size
 
         binding.numberOfRevenue.text = formatRupiah?.format(totalRevenue)?.replace(",00", "")
         binding.tvTotalClient.text =
             resources.getString(R.string.total_transaction, totalTransaction.toString())
-        totalRevenue = 0.0
         totalTransaction = 0
     }
 
@@ -431,12 +435,12 @@ class TransactionFragment : Fragment() {
         transactionData = null
         calendar = null
         dateFormat = null
-        localeID = null
         formatRupiah = null
         email = null
         username = null
         name = null
         splitValue = null
+        _binding = null
     }
 
 

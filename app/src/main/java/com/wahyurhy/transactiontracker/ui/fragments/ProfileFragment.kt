@@ -112,6 +112,7 @@ class ProfileFragment : Fragment() {
         super.onDestroy()
         auth = null
         user = null
+        _binding = null
     }
 
 }
