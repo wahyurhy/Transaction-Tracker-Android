@@ -30,8 +30,8 @@
                 android:layout_gravity="start"
                 android:layout_marginStart="14dp"
                 android:backgroundTint="@android:color/transparent"
-                android:src="@drawable/ic_back"
-                android:contentDescription="@string/back" />
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_back" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -39,8 +39,8 @@
                 android:layout_gravity="end"
                 android:layout_marginEnd="14dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_whatsapp_green"
-                android:contentDescription="@string/go_to_whatsapp" />
+                android:contentDescription="@string/go_to_whatsapp"
+                android:src="@drawable/ic_whatsapp_green" />
 
             <TextView
                 android:id="@+id/tvUsername"

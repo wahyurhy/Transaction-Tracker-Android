@@ -25,6 +25,7 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityTransactionDetailsBinding
 import com.wahyurhy.transactiontracker.databinding.EditDialogBinding
+import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -61,7 +62,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         binding.btnEdit.setOnClickListener {
-            openEditDialog(intent.getStringExtra(NAME_EXTRA).toString())
+            openEditDialog(nameExtra, transactionIDExtra)
         }
 
         binding.edNominalPayment.apply {
@@ -73,7 +74,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         setValuesToViews()
 
         binding.btnDelete.setOnClickListener {
-            deleteData()
+            deleteData(transactionIDExtra)
         }
 
         binding.btnSave.setOnClickListener {
@@ -92,13 +93,13 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun deleteData() {
+    private fun deleteData(transactionID: String) {
         val alertBox = AlertDialog.Builder(this)
         alertBox.setTitle(getString(R.string.confirmation))
         alertBox.setMessage(getString(R.string.confirmation_info))
         alertBox.setPositiveButton(getString(R.string.yes_answer)) { _: DialogInterface, _: Int ->
             deleteRecord(
-                intent.getStringExtra(TRANSACTION_ID_EXTRA).toString()
+                transactionID
             )
         }
         alertBox.setNegativeButton(getString(R.string.no_answer)) { dialog: DialogInterface, _: Int ->
@@ -232,13 +233,25 @@ class TransactionDetailsActivity : AppCompatActivity() {
         showLoading(true)
         val user = Firebase.auth.currentUser
         val uid = user?.uid
+        val calendar: Calendar = Calendar.getInstance()
+        val dateFromLong = Date(date)
+
+        calendar.time = dateFromLong
+        calendar.add(Calendar.MONTH, 1)
+        val nextMonth: Date = calendar.time
+
+        val invertedDateAddOneMonth = nextMonth.time * -1
+
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
-            val transactionInfo = TransactionModel(transactionID, name, whatsApp, amount, date, status, dateInverted, amountLeft, amountOver, amountPayed)
-            dbRef.child(transactionID).setValue(transactionInfo)
+            val transaction = TransactionModel(transactionID, name, whatsApp, amount, date, status, dateInverted, amountLeft, amountOver, amountPayed)
+            val newTransactionID = dbRef.push().key!! + "0"
+            val transactionAddOneMonth = TransactionModel(newTransactionID, name, whatsApp, amount, nextMonth.time, false, invertedDateAddOneMonth, amountLeft, 0.0, 0.0)
+            dbRef.child(transactionID).setValue(transaction)
                 .addOnCompleteListener {
                     showLoading(false)
                     Toast.makeText(this, getString(R.string.data_saved), Toast.LENGTH_SHORT).show()
+                    dbRef.child(newTransactionID).setValue(transactionAddOneMonth)
                     finish()
                 }
                 .addOnFailureListener { err ->
@@ -268,12 +281,10 @@ class TransactionDetailsActivity : AppCompatActivity() {
         binding.edNominalPayment.setText(showAmountCurrently.toString())
     }
 
-    private fun openEditDialog(name: String) {
+    private fun openEditDialog(name: String, transactionID: String) {
         val mDialog = AlertDialog.Builder(this)
         val bind: EditDialogBinding = EditDialogBinding.inflate(layoutInflater)
         mDialog.setView(bind.root)
-
-        val transactionIDExtra = intent.getStringExtra(TRANSACTION_ID_EXTRA).toString()
 
         bind.edNameDialog.setText(intent.getStringExtra(NAME_EXTRA).toString())
         bind.edWhatsAppDialog.setMaskingPhoneNumber("")
@@ -307,7 +318,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         bind.btnUpdate.setOnClickListener {
             updateTransactionData(
-                transactionIDExtra,
+                transactionID,
                 bind.edNameDialog.text.toString().trim(),
                 bind.edWhatsAppDialog.text.toString().replace("-", "").trim(),
                 bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble(),
@@ -322,7 +333,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, getString(R.string.transaction_data_updated), Toast.LENGTH_LONG).show()
             val intentRefresh = Intent(this, TransactionDetailsActivity::class.java)
 
-            intentRefresh.putExtra(TRANSACTION_ID_EXTRA, transactionIDExtra)
+            intentRefresh.putExtra(TRANSACTION_ID_EXTRA, transactionID)
             intentRefresh.putExtra(NAME_EXTRA, bind.edNameDialog.text.toString().trim())
             intentRefresh.putExtra(DATE_EXTRA, date)
             intentRefresh.putExtra(DATE_INVERTED_EXTRA, invertedDate)

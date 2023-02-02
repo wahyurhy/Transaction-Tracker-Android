@@ -32,7 +32,7 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddTransactionBinding
 
-    private lateinit var broadcastReceiver: MonthlyCreateTransaction
+//    private lateinit var broadcastReceiver: MonthlyCreateTransaction
     private var user: FirebaseUser? = null
     private var uid: String? = null
     private var sdf: SimpleDateFormat? = null
@@ -135,7 +135,7 @@ class AddTransactionActivity : AppCompatActivity() {
                         0.0
                     )
 
-                    broadcastReceiver = MonthlyCreateTransaction(transactionID.toString().dropLast(1), name, whatsApp, paymentAmount, date)
+//                    broadcastReceiver = MonthlyCreateTransaction(transactionID.toString().dropLast(1), name, whatsApp, paymentAmount, date)
 
                     if (dbRef != null) {
                         completeListener =
@@ -143,7 +143,7 @@ class AddTransactionActivity : AppCompatActivity() {
                                 if (databaseError == null) {
                                     // code yang akan dijalankan jika tidak terjadi error
                                     Log.d("AddTransactionActivity", "saveTransactionData: masuk addOnCompleteListener")
-                                    broadcastReceiver.setMonthlyNotification(this)
+//                                    broadcastReceiver.setMonthlyNotification(this)
                                     Toast.makeText(this, getString(R.string.data_inserted_success), Toast.LENGTH_SHORT).show()
                                     finish()
                                 } else {
