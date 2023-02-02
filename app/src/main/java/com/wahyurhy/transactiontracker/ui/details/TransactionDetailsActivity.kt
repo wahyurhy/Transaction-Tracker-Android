@@ -19,13 +19,13 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityTransactionDetailsBinding
 import com.wahyurhy.transactiontracker.databinding.EditDialogBinding
-import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -245,19 +245,54 @@ class TransactionDetailsActivity : AppCompatActivity() {
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
             val transaction = TransactionModel(transactionID, name, whatsApp, amount, date, status, dateInverted, amountLeft, amountOver, amountPayed)
-            val newTransactionID = dbRef.push().key!! + "0"
-            val transactionAddOneMonth = TransactionModel(newTransactionID, name, whatsApp, amount, nextMonth.time, false, invertedDateAddOneMonth, amountLeft, 0.0, 0.0)
+
+            checkIsPayedOffForAddNextMonthTransaction(
+                amountLeft,
+                dbRef,
+                name,
+                whatsApp,
+                amount,
+                nextMonth,
+                invertedDateAddOneMonth
+            )
+
             dbRef.child(transactionID).setValue(transaction)
                 .addOnCompleteListener {
                     showLoading(false)
                     Toast.makeText(this, getString(R.string.data_saved), Toast.LENGTH_SHORT).show()
-                    dbRef.child(newTransactionID).setValue(transactionAddOneMonth)
                     finish()
                 }
                 .addOnFailureListener { err ->
                     showLoading(false)
                     Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_SHORT).show()
                 }
+        }
+    }
+
+    private fun checkIsPayedOffForAddNextMonthTransaction(
+        amountLeft: Double,
+        dbRef: DatabaseReference,
+        name: String,
+        whatsApp: String,
+        amount: Double,
+        nextMonth: Date,
+        invertedDateAddOneMonth: Long
+    ) {
+        if (amountLeft <= 0.0) {
+            val newTransactionID = dbRef.push().key!! + "0"
+            val transactionAddOneMonth = TransactionModel(
+                newTransactionID,
+                name,
+                whatsApp,
+                amount,
+                nextMonth.time,
+                false,
+                invertedDateAddOneMonth,
+                amountLeft,
+                0.0,
+                0.0
+            )
+            dbRef.child(newTransactionID).setValue(transactionAddOneMonth)
         }
     }
 
