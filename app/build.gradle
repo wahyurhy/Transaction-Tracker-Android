@@ -75,5 +75,5 @@ dependencies {
     implementation 'com.loopj.android:android-async-http:1.4.10'
 
     // LeakCanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 }

@@ -242,15 +242,17 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         val invertedDateAddOneMonth = nextMonth.time * -1
 
+        val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
+
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
-            val transaction = TransactionModel(transactionID, name, whatsApp, amount, date, status, dateInverted, amountLeft, amountOver, amountPayed)
+            val transaction = TransactionModel(transactionID, name, encryptedWhatsApp, amount, date, status, dateInverted, amountLeft, amountOver, amountPayed)
 
             checkIsPayedOffForAddNextMonthTransaction(
                 amountLeft,
                 dbRef,
                 name,
-                whatsApp,
+                encryptedWhatsApp,
                 amount,
                 nextMonth,
                 invertedDateAddOneMonth
@@ -273,17 +275,19 @@ class TransactionDetailsActivity : AppCompatActivity() {
         amountLeft: Double,
         dbRef: DatabaseReference,
         name: String,
-        whatsApp: String,
+        encryptedWhatsApp: String,
         amount: Double,
         nextMonth: Date,
         invertedDateAddOneMonth: Long
     ) {
-        if (amountLeft <= 0.0) {
+        val status = intent.getBooleanExtra(STATUS_EXTRA, false)
+
+        if (amountLeft <= 0.0 && !status) {
             val newTransactionID = dbRef.push().key!! + "0"
             val transactionAddOneMonth = TransactionModel(
                 newTransactionID,
                 name,
-                whatsApp,
+                encryptedWhatsApp,
                 amount,
                 nextMonth.time,
                 false,
@@ -503,9 +507,12 @@ class TransactionDetailsActivity : AppCompatActivity() {
     ) {
         val user = Firebase.auth.currentUser
         val uid = user?.uid
+
+        val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
+
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
-            val transactionInfo = TransactionModel(transactionID, name, whatsApp, payment, date, status, invertedDate, amountLeft, amountOver, amountCurrently)
+            val transactionInfo = TransactionModel(transactionID, name, encryptedWhatsApp, payment, date, status, invertedDate, amountLeft, amountOver, amountCurrently)
             dbRef.child(transactionID).setValue(transactionInfo)
         }
     }

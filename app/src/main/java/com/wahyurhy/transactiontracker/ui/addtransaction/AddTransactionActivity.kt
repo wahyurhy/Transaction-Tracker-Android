@@ -22,9 +22,7 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityAddTransactionBinding
 import com.wahyurhy.transactiontracker.notification.MonthlyCreateTransaction
-import com.wahyurhy.transactiontracker.utils.SELECT_PHONE_NUMBER
-import com.wahyurhy.transactiontracker.utils.setMaskingMoney
-import com.wahyurhy.transactiontracker.utils.setMaskingPhoneNumber
+import com.wahyurhy.transactiontracker.utils.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -122,10 +120,14 @@ class AddTransactionActivity : AppCompatActivity() {
 
                     invertedDate = date * -1 //convert millis value to negative, so it can be sort as descending order
 
+                    val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
+
+                    Toast.makeText(this, whatsApp, Toast.LENGTH_SHORT).show()
+
                     val transaction = TransactionModel(
                         transactionID.toString(),
                         name,
-                        whatsApp,
+                        encryptedWhatsApp,
                         paymentAmount,
                         date,
                         false,

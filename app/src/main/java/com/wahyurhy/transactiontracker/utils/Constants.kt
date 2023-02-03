@@ -24,6 +24,7 @@ val AMOUNT_PAYED = "amountPayed"
 val CHANNEL_ID = "channel_01"
 val CHANNEL_NAME = "wahyu channel"
 val ID_REPEATING = 101
+val SECRET_KEY = "PGKJHEDNMLSGACBAPGKJHEDNMLSFECBA"
 
 val SINGLE_EXECUTOR = Executors.newSingleThreadExecutor()
 
