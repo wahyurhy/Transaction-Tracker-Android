@@ -13,6 +13,7 @@
     <color name="gray_form">#E1E3E6</color>
     <color name="blue">#5C57C9</color>
     <color name="green">#2ADE0D</color>
+    <color name="red">#F44336</color>
     <color name="verified_color">#4ECB71</color>
     <color name="unverified_color">#DD4D23</color>
 </resources>

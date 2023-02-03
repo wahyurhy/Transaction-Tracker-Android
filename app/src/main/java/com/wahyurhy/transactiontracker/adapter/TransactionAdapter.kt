@@ -52,12 +52,25 @@ class TransactionAdapter(private val transactionList: ArrayList<TransactionModel
                     tvState.text = itemView.context.resources.getString(R.string.paid_off)
                     tvState.setBackgroundResource(R.drawable.bg_state_true)
                     if (currentTransaction.amountOver != 0.0) {
+                        tvState.text = itemView.context.resources.getString(R.string.over_paid, formatRupiah.format(currentTransaction.amountOver).replace(",00", ""))
                         tvTransactionAmount.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
                     }
                 }
                 currentTransaction.stateTransaction == false -> {
                     tvState.text = itemView.context.resources.getString(R.string.paid_yet)
                     tvState.setBackgroundResource(R.drawable.bg_state_false)
+
+
+                    val currentAmountLeft = currentTransaction.amountLeft as Double
+                    val currentPaymentAmount = currentTransaction.paymentAmount as Double
+
+                    if (currentAmountLeft != 0.0) {
+                        if (currentAmountLeft < currentPaymentAmount) {
+                            tvState.text = itemView.context.resources.getString(R.string.still_left, formatRupiah.format(currentAmountLeft).replace(",00", ""))
+                            tvState.setBackgroundResource(R.drawable.bg_state_unfinished)
+                            tvTransactionAmount.setTextColor(ContextCompat.getColor(itemView.context, R.color.red))
+                        }
+                    }
                 }
             }
         }
