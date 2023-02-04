@@ -31,6 +31,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class TransactionDetailsActivity : AppCompatActivity() {
 
     private val TAG = TransactionDetailsActivity::class.java.simpleName
@@ -90,6 +91,10 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 amountOver,
                 amountCurrently
             )
+        }
+
+        binding.whatsApp.setOnClickListener {
+            Toast.makeText(this, "on development", Toast.LENGTH_SHORT).show()
         }
     }
 

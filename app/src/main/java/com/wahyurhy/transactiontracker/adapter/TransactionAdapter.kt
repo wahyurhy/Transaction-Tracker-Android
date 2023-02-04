@@ -87,12 +87,6 @@ class TransactionAdapter(private val transactionList: ArrayList<TransactionModel
                                 formatRupiah.format(currentAmountLeft).replace(",00", "")
                             )
                             tvState.setBackgroundResource(R.drawable.bg_state_unfinished)
-                            tvTransactionAmount.setTextColor(
-                                ContextCompat.getColor(
-                                    itemView.context,
-                                    R.color.red
-                                )
-                            )
                         }
                     }
                 }
