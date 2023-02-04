@@ -95,25 +95,43 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         binding.whatsApp.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = dateExtra
-            val monthStart = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
-            calendar.add(Calendar.MONTH, 1)
-            val monthEnd = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+            if (whatsAppExtra.length > 5) {
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = dateExtra
+                val monthStart = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+                calendar.add(Calendar.MONTH, 1)
+                val monthEnd = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
 
-            val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+                val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
 
-            val tagihan = formatRupiah.format(amountLeft).replace(",00", "")
+                val tagihan = formatRupiah.format(amountLeft).replace(",00", "")
 
-            try {
-                val number = "62${whatsAppExtra.drop(1)}"
-                val message = "Assalamu'alaikum Wr. Wb.\n\nBapak/Ibu ${nameExtra.split(" ")[0]}, maaf untuk tagihan WiFi pada periode $monthStart-$monthEnd-nya sudah dapat dibayarkan 🙏\n\nUntuk total pembayaran sebesar $tagihan, dapat melakukan Pembayaran Langsung (Uang Tunai) atau dapat mentransfer ke rekening bank (Mandiri) berikut:\n\nNo. Rek : 1560016057376\na/n : Dasriyah\n\nTerimakasih.."
-                val url = "https://api.whatsapp.com/send?phone=$number&text=$message"
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(url)
-                startActivity(i)
-            } catch (e: Exception) {
-                Log.e(TAG, "onCreate: ${e.message}")
+                val name = nameExtra.split(" ")[0]
+
+                try {
+                    val number = "62${whatsAppExtra.drop(1)}"
+                    val message = if (amountLeft <= 0.0) {
+                        "" // nothing
+                    } else {
+                        getString(R.string.message_invoice, name, monthStart, monthEnd, tagihan)
+                    }
+                    val url = "https://api.whatsapp.com/send?phone=$number&text=$message"
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(url)
+                    startActivity(i)
+                } catch (e: Exception) {
+                    Log.e(TAG, "onCreate: ${e.message}")
+                }
+            } else {
+                Snackbar.make(binding.snackbarLayout, resources.getString(R.string.info_number_is_too_short, whatsAppExtra), Snackbar.LENGTH_LONG)
+                    .setDuration(7000)
+                    .setTextMaxLines(5)
+                    .setAnchorView(binding.btnSave)
+                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                    .setAction(getString(R.string.change_data)) {
+                        openEditDialog(nameExtra, transactionIDExtra)
+                    }
+                    .show()
             }
         }
     }
@@ -135,16 +153,32 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     private fun deleteRecord(transactionID: String) {
+        showLoading(true)
         val lastCharOfTransactionID = transactionID.takeLast(1).toInt()
         val dropLastOfTransactionID = transactionID.dropLast(1)
 
         val user = Firebase.auth.currentUser
         val uid = user?.uid
+
+        var isDeleted = true
+
         if (uid != null) {
             for (i in lastCharOfTransactionID..12) {
                 if (i > 9) {
                     val dbRef = FirebaseDatabase.getInstance().getReference(uid).child(dropLastOfTransactionID + 9 + i.toString())
                     dbRef.removeValue()
+                        .addOnCompleteListener {
+                            showLoading(false)
+                            if (isDeleted) {
+                                Toast.makeText(this, getString(R.string.data_deleted), Toast.LENGTH_SHORT).show()
+                                isDeleted = false
+                            }
+                            finish()
+                        }
+                        .addOnFailureListener { err ->
+                            showLoading(false)
+                            Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_SHORT).show()
+                        }
                 } else {
                     val dbRef = FirebaseDatabase.getInstance().getReference(uid).child(dropLastOfTransactionID + i.toString())
                     dbRef.removeValue()
@@ -394,7 +428,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 amountCurrently
             )
             alertDialog.dismiss()
-            Toast.makeText(applicationContext, getString(R.string.transaction_data_updated), Toast.LENGTH_LONG).show()
             val intentRefresh = Intent(this, TransactionDetailsActivity::class.java)
 
             intentRefresh.putExtra(TRANSACTION_ID_EXTRA, transactionID)
@@ -496,7 +529,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
                         amountCurrently
                     )
                     alertDialog.dismiss()
-                    Toast.makeText(applicationContext, getString(R.string.transaction_data_updated), Toast.LENGTH_LONG).show()
                     val intentRefresh = Intent(this, TransactionDetailsActivity::class.java)
 
                     intentRefresh.putExtra(TRANSACTION_ID_EXTRA, transactionIDExtra)
@@ -530,6 +562,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         amountOver: Double,
         amountCurrently: Double
     ) {
+        showLoading(true)
         val user = Firebase.auth.currentUser
         val uid = user?.uid
 
@@ -539,6 +572,15 @@ class TransactionDetailsActivity : AppCompatActivity() {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
             val transactionInfo = TransactionModel(transactionID, name, encryptedWhatsApp, payment, date, status, invertedDate, amountLeft, amountOver, amountCurrently)
             dbRef.child(transactionID).setValue(transactionInfo)
+                .addOnCompleteListener {
+                    showLoading(false)
+                    Toast.makeText(this, getString(R.string.data_changed), Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                .addOnFailureListener { err ->
+                    showLoading(false)
+                    Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 

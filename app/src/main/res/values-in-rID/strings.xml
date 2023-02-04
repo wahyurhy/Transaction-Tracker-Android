@@ -81,7 +81,10 @@
     <string name="current_payment_amount">Jumlah Pembayaran saat ini:</string>
     <string name="payment_left">Sisa Pembayaran:</string>
     <string name="info_amount_over">Nominal Pembayaran lebih besar dari Total Pembayaran sebesar %1$s</string>
+    <string name="info_number_is_too_short">Jumlah nomor pelanggan terlalu pendek (No.telp: %1$s), apakah Anda ingin mengubah data?</string>
     <string name="data_saved">Data Berhasil Disimpan!</string>
+    <string name="data_changed">Data Berhasil Diubah!</string>
+    <string name="data_deleted">Data Berhasil Dihapus!</string>
     <string name="sign_up_success">Berhasil Bergabung!</string>
     <string name="data_inserted_success">Berhasil Menambahkan Transaksi!</string>
     <string name="password_is_not_match">Kata sandi tidak sama</string>
@@ -94,7 +97,6 @@
     <string name="print_data_transactions">Cetak Data Transaksi</string>
     <string name="there_is_no_all_categories_transaction_at_this_month">Tidak ada transaksi Semua Kategori di Bulan Ini</string>
     <string name="search_hint">Cari nama disini...</string>
-    <string name="transaction_data_updated">Data telah diubah</string>
     <string name="confirmation">Apakah Anda yakin?</string>
     <string name="confirmation_info">Apakah Anda yakin untuk menghapus transaksi ini?</string>
     <string name="yes_answer">Ya</string>

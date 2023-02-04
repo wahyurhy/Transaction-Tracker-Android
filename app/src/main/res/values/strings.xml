@@ -47,7 +47,10 @@
     <string name="current_payment_amount">Current Payment Amount:</string>
     <string name="payment_left">Payment left:</string>
     <string name="info_amount_over">Amount of Payment is greater than Total Payment of %1$s</string>
+    <string name="info_number_is_too_short">Number of customer is too short (No.telp: %1$s), do you want to change the data?</string>
     <string name="data_saved">Data Saved!</string>
+    <string name="data_changed">Data Changed!</string>
+    <string name="data_deleted">Data Deleted!</string>
     <string name="sign_up_success">Sign up Successful</string>
     <string name="data_inserted_success">Data Inserted Successfully</string>
     <string name="password_is_not_match">Password is not Matching</string>
@@ -61,7 +64,6 @@
     <string name="rp_revenue_info" translatable="false">Rp</string>
     <string name="there_is_no_all_categories_transaction_at_this_month">There is no All Categories transaction\nat This Month</string>
     <string name="search_hint">Search name here…</string>
-    <string name="transaction_data_updated">Transaction Data Updated</string>
     <string name="confirmation">Are you sure?</string>
     <string name="confirmation_info">Do you want to delete this transaction?</string>
     <string name="yes_answer">Yes</string>
@@ -73,6 +75,7 @@
     <string name="profile">Profile</string>
     <string name="over_paid">Over %1$s</string>
     <string name="still_left">Still %1$s left</string>
+    <string name="message_invoice">Assalamu\'alaikum Wr. Wb.\n\nBapak/Ibu %1$s, maaf untuk tagihan WiFi pada periode %2$s-%3$s-nya sudah dapat dibayarkan 🙏\n\nUntuk total pembayaran sebesar %4$s, dapat melakukan Pembayaran Langsung (Uang Tunai) atau dapat mentransfer ke rekening bank (Mandiri) berikut:\n\nNo. Rek : 1560016057376\na/n : Dasriyah\n\nTerimakasih..</string>
 
     <string-array name="filter_sort_by_periode">
         <item>2022</item>
