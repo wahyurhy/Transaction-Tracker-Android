@@ -122,8 +122,6 @@ class AddTransactionActivity : AppCompatActivity() {
 
                     val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
 
-                    Toast.makeText(this, whatsApp, Toast.LENGTH_SHORT).show()
-
                     val transaction = TransactionModel(
                         transactionID.toString(),
                         name,

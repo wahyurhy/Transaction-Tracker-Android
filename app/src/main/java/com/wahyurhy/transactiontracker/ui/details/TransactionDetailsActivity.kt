@@ -95,9 +95,19 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         binding.whatsApp.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = dateExtra
+            val monthStart = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+            calendar.add(Calendar.MONTH, 1)
+            val monthEnd = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+
+            val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+
+            val tagihan = formatRupiah.format(amountLeft).replace(",00", "")
+
             try {
                 val number = "62${whatsAppExtra.drop(1)}"
-                val message = "Assalamu'alaikum ${nameExtra.split(" ")[0].lowercase()}, maaf tagihan untuk bulan ini "
+                val message = "Assalamu'alaikum Wr. Wb.\n\nBapak/Ibu ${nameExtra.split(" ")[0]}, maaf untuk tagihan WiFi pada periode $monthStart-$monthEnd-nya sudah dapat dibayarkan 🙏\n\nUntuk total pembayaran sebesar $tagihan, dapat melakukan Pembayaran Langsung (Uang Tunai) atau dapat mentransfer ke rekening bank (Mandiri) berikut:\n\nNo. Rek : 1560016057376\na/n : Dasriyah\n\nTerimakasih.."
                 val url = "https://api.whatsapp.com/send?phone=$number&text=$message"
                 val i = Intent(Intent.ACTION_VIEW)
                 i.data = Uri.parse(url)

@@ -152,6 +152,7 @@
                 android:fontFamily="@font/poppins_medium"
                 android:text="@string/list_of_transactions"
                 android:textColor="@color/black"
+                android:textStyle="bold"
                 android:textSize="18sp" />
 
             <Spinner
@@ -215,7 +216,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total Transaction: 0"
-                android:layout_marginTop="-18dp"
+                android:layout_marginTop="-10dp"
                 android:layout_marginStart="9dp"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_below="@id/tvTitleCardTransaction"

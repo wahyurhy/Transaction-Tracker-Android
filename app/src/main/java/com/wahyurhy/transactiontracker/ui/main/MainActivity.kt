@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     private fun makeCurrentFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fl_wrapper, fragment)
-            commit()
+            commitNowAllowingStateLoss()
         }
     }
 
