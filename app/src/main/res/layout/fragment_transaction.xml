@@ -155,6 +155,21 @@
                 android:textSize="18sp" />
 
             <Spinner
+                android:id="@+id/monthSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:textAlignment="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="23dp"
+                android:popupBackground="@color/white"
+                android:entries="@array/filter_sort_by_month"
+                android:background="@drawable/bg_spinner"
+                android:textColor="@color/black" />
+
+            <Spinner
                 android:id="@+id/typeShowSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
@@ -165,6 +180,7 @@
                 android:paddingStart="5dp"
                 android:paddingEnd="23dp"
                 android:popupBackground="@color/white"
+                android:layout_below="@id/monthSpinner"
                 android:entries="@array/filter_sort_by_status"
                 android:background="@drawable/bg_spinner"
                 android:textColor="@color/black" />
@@ -187,7 +203,7 @@
                 android:singleLine="true"
                 android:textColorHint="@color/black"
                 android:textSize="16sp"
-                android:layout_below="@id/tvTitleCardTransaction"
+                android:layout_below="@id/typeShowSpinner"
                 app:closeIcon="@drawable/ic_cross"
                 app:iconifiedByDefault="false"
                 app:queryHint="@string/search_hint"

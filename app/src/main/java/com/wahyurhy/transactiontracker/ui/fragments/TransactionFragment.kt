@@ -29,14 +29,18 @@ class TransactionFragment : Fragment() {
     private val user = Firebase.auth.currentUser
     private lateinit var dbRef: DatabaseReference
     private var selectedTimeSpan: String = sdf.format(currentYear) // default year
+    private var selectedMonth = ""
     private var selectedShowStatus: String =
         arrayOf(R.array.filter_sort_by_status)[0].toString() // default all time
     private var year: String? = ""
     private var getYear: Int = 0
+    private var dateStart: Long = 0
+    private var dateEnd: Long = 0
     private var totalRevenue = 0.0
     private var totalTransaction = 0
     private var selectedYear = ""
     private var isSearched = false
+    private var isWithMonth = false
     private val searchText = StringBuilder()
     private lateinit var transactionList: ArrayList<TransactionModel>
     private lateinit var valueEventListenerGetTransactionData: ValueEventListener
@@ -60,6 +64,7 @@ class TransactionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
+        selectedMonth = resources.getStringArray(R.array.filter_sort_by_month)[0].toString() // default month
         _binding = FragmentTransactionBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -207,6 +212,65 @@ class TransactionFragment : Fragment() {
                                 binding.tvDesc.text = getString(R.string.info_revenue, resources.getStringArray(R.array.filter_sort_by_periode)[i].toString())
                                 selectedTimeSpan = resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
                                 selectedYear = resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
+
+                                if (isWithMonth) {
+                                    var bulan = 0
+                                    when (selectedMonth) {
+                                        "January" -> bulan = Bulan.January.value
+                                        "Januari" -> bulan = Bulan.January.value
+                                        "February" -> bulan = Bulan.February.value
+                                        "Februari" -> bulan = Bulan.February.value
+                                        "March" -> bulan = Bulan.March.value
+                                        "Maret" -> bulan = Bulan.March.value
+                                        "April" -> bulan = Bulan.April.value
+                                        "May" -> bulan = Bulan.May.value
+                                        "Mei" -> bulan = Bulan.May.value
+                                        "June" -> bulan = Bulan.June.value
+                                        "Juni" -> bulan = Bulan.June.value
+                                        "July" -> bulan = Bulan.July.value
+                                        "Juli" -> bulan = Bulan.July.value
+                                        "August" -> bulan = Bulan.August.value
+                                        "Agustus" -> bulan = Bulan.August.value
+                                        "September" -> bulan = Bulan.September.value
+                                        "October" -> bulan = Bulan.October.value
+                                        "Oktober" -> bulan = Bulan.October.value
+                                        "November" -> bulan = Bulan.November.value
+                                        "December" -> bulan = Bulan.December.value
+                                        "Desember" -> bulan = Bulan.December.value
+                                    }
+                                    getRangeDate(Calendar.DAY_OF_MONTH, bulan)
+                                } else {
+                                    getRangeDate(Calendar.YEAR, 0)
+                                }
+                            }
+                        }
+                        getTransactionData()
+                        showEmptyRevenue()
+                    }
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+            }
+
+        binding.monthSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    for (i in 0..12) {
+                        when (binding.monthSpinner.selectedItem) {
+                            resources.getStringArray(R.array.filter_sort_by_month)[i].toString() -> {
+                                selectedMonth = resources.getStringArray(R.array.filter_sort_by_month)[i].toString()
+
+                                if (i == 0) {
+                                    isWithMonth = false
+                                    binding.tvDesc.text = getString(R.string.info_revenue, selectedYear)
+                                    getRangeDate(Calendar.YEAR, 0)
+                                } else {
+                                    isWithMonth = true
+                                    binding.tvDesc.text = getString(R.string.info_revenue_with_month, resources.getStringArray(R.array.filter_sort_by_month)[i].toString(), selectedYear)
+                                    getRangeDate(Calendar.DAY_OF_MONTH, i - 1)
+                                }
                             }
                         }
                         getTransactionData()
@@ -276,8 +340,14 @@ class TransactionFragment : Fragment() {
 
                                 year = dateFormat?.format(calendar!!.time)
 
-                                if (year == selectedYear) {
-                                    transactionList.add(transactionData!!)
+                                if (isWithMonth) {
+                                    if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData!!.dueDateTransaction!! <= dateEnd) {
+                                        transactionList.add(transactionData!!)
+                                    }
+                                } else {
+                                    if (year == selectedYear) {
+                                        transactionList.add(transactionData!!)
+                                    }
                                 }
                             }
                         }
@@ -291,8 +361,14 @@ class TransactionFragment : Fragment() {
                                 year = dateFormat?.format(calendar!!.time)
 
                                 if (transactionData!!.stateTransaction!!) {
-                                    if (year == selectedYear) {
-                                        transactionList.add(transactionData!!)
+                                    if (isWithMonth) {
+                                        if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData!!.dueDateTransaction!! <= dateEnd) {
+                                            transactionList.add(transactionData!!)
+                                        }
+                                    } else {
+                                        if (year == selectedYear) {
+                                            transactionList.add(transactionData!!)
+                                        }
                                     }
                                 }
                             }
@@ -307,8 +383,14 @@ class TransactionFragment : Fragment() {
                                 year = dateFormat?.format(calendar!!.time)
 
                                 if (!transactionData!!.stateTransaction!!) {
-                                    if (year == selectedYear) {
-                                        transactionList.add(transactionData!!)
+                                    if (isWithMonth) {
+                                        if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData!!.dueDateTransaction!! <= dateEnd) {
+                                            transactionList.add(transactionData!!)
+                                        }
+                                    } else {
+                                        if (year == selectedYear) {
+                                            transactionList.add(transactionData!!)
+                                        }
                                     }
                                 }
                             }
@@ -397,6 +479,22 @@ class TransactionFragment : Fragment() {
         totalTransaction = 0
     }
 
+    private fun getRangeDate(rangeType: Int, month: Int) {
+        val currentDate = Date()
+        val cal: Calendar = Calendar.getInstance(TimeZone.getDefault())
+        cal.time = currentDate
+
+        val startDay = cal.getActualMinimum(rangeType)
+        cal.set(selectedYear.toInt(), month, startDay)
+        val startDate = cal.time
+        dateStart = startDate.time
+
+        val endDay = cal.getActualMaximum(rangeType)
+        cal.set(selectedYear.toInt(), month, endDay)
+        val endDate = cal.time
+        dateEnd = endDate.time
+    }
+
     private fun showUserName() {
         user?.reload()
 
@@ -410,7 +508,7 @@ class TransactionFragment : Fragment() {
             username
         }
 
-        binding.tvUsername.text = resources.getString(R.string.greetings_name, name)
+        binding.tvUsername.text = resources.getString(R.string.greetings_name, name!!.split(" ")[0])
     }
 
     override fun onResume() {

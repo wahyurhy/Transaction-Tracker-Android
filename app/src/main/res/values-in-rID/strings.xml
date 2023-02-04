@@ -32,6 +32,22 @@
         <item>2033</item>
     </string-array>
 
+    <string-array name="filter_sort_by_month">
+        <item>Semua Bulan</item>
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
+
     <string-array name="filter_sort_by_status">
         <item>Semua Kategori</item>
         <item>Sudah Lunas</item>
@@ -88,4 +104,5 @@
     <string name="notif_today_due_date_title">Tanggal jatuh tempo hari ini</string>
     <string name="still_left">Kurang %1$s</string>
     <string name="over_paid">Lebih %1$s</string>
+    <string name="info_revenue_with_month">Pendapatan %1$s %2$s</string>
 </resources>
