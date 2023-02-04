@@ -70,12 +70,6 @@ class TransactionAdapter(private val transactionList: ArrayList<TransactionModel
                             R.string.over_paid,
                             formatRupiah.format(currentTransaction.amountOver).replace(",00", "")
                         )
-                        tvTransactionAmount.setTextColor(
-                            ContextCompat.getColor(
-                                itemView.context,
-                                R.color.green
-                            )
-                        )
                     }
                 }
                 currentTransaction.stateTransaction == false -> {
