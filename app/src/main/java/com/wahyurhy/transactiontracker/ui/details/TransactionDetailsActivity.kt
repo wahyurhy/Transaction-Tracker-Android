@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.Editable
@@ -94,7 +95,16 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         binding.whatsApp.setOnClickListener {
-            Toast.makeText(this, "on development", Toast.LENGTH_SHORT).show()
+            try {
+                val number = "62${whatsAppExtra.drop(1)}"
+                val message = "Assalamu'alaikum ${nameExtra.split(" ")[0].lowercase()}, maaf tagihan untuk bulan ini "
+                val url = "https://api.whatsapp.com/send?phone=$number&text=$message"
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(url)
+                startActivity(i)
+            } catch (e: Exception) {
+                Log.e(TAG, "onCreate: ${e.message}")
+            }
         }
     }
 
@@ -422,7 +432,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
             if (cursor != null && cursor.moveToFirst()) {
                 val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                 val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-                val name = cursor.getString(nameIndex)
                 var number = cursor.getString(numberIndex)
 
                 when {
@@ -435,8 +444,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 mDialog.setView(bind.root)
 
                 val transactionIDExtra = intent.getStringExtra(TRANSACTION_ID_EXTRA).toString()
+                val nameExtra = intent.getStringExtra(NAME_EXTRA).toString()
 
-                bind.edNameDialog.setText(name)
+                bind.edNameDialog.setText(nameExtra)
                 bind.edWhatsAppDialog.setMaskingPhoneNumber("")
                 bind.edWhatsAppDialog.setText(number)
 
