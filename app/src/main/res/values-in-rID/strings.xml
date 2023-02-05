@@ -107,4 +107,5 @@
     <string name="still_left">Kurang %1$s</string>
     <string name="over_paid">Lebih %1$s</string>
     <string name="info_revenue_with_month">Pendapatan %1$s %2$s</string>
+    <string name="info_number_is_empty">Sepertinya Anda belum menambahkan nomor WhatsApp, apakah Anda ingin menambahkannya?</string>
 </resources>

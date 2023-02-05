@@ -95,6 +95,11 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         binding.whatsApp.setOnClickListener {
+            val messageSnackbar = if (whatsAppExtra.length <= 1) {
+                getString(R.string.info_number_is_empty)
+            } else {
+                getString(R.string.info_number_is_too_short)
+            }
             if (whatsAppExtra.length > 5) {
                 val calendar = Calendar.getInstance()
                 calendar.timeInMillis = dateExtra
@@ -123,7 +128,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
                     Log.e(TAG, "onCreate: ${e.message}")
                 }
             } else {
-                Snackbar.make(binding.snackbarLayout, resources.getString(R.string.info_number_is_too_short, whatsAppExtra), Snackbar.LENGTH_LONG)
+                Snackbar.make(binding.snackbarLayout, messageSnackbar, Snackbar.LENGTH_LONG)
                     .setDuration(7000)
                     .setTextMaxLines(5)
                     .setAnchorView(binding.btnSave)
@@ -194,7 +199,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(s: CharSequence, p1: Int, p2: Int, p3: Int) {
-                binding.tvAmountCurrently.text = resources.getString(R.string.rupiah_s_edit_text, s) // Rp s
+                binding.tvAmountCurrently.text = getString(R.string.rupiah_s_edit_text, s) // Rp s
                 Log.d(TAG, "onTextChanged: value s = $s")
                 val shouldPayAmount = intent.getDoubleExtra(AMOUNT_EXTRA, 0.0).toString()
 
@@ -216,9 +221,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
                     if (amountOver > 0.0) {
                         val amountOverRupiahFormat = formatRupiah.format(amountOver).replace(",00", "")
-                        binding.tvAmountLeft.text = resources.getString(R.string.payed_over, amountOverRupiahFormat)
+                        binding.tvAmountLeft.text = getString(R.string.payed_over, amountOverRupiahFormat)
 
-                        Snackbar.make(binding.snackbarLayout, resources.getString(R.string.info_amount_over, amountOverRupiahFormat), Snackbar.LENGTH_LONG)
+                        Snackbar.make(binding.snackbarLayout, getString(R.string.info_amount_over, amountOverRupiahFormat), Snackbar.LENGTH_LONG)
                             .setDuration(7000)
                             .setAnchorView(binding.btnSave)
                             .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
@@ -458,7 +463,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         val result = Date(date)
         bind.edDate.setText(simpleDateFormat.format(result))
 
-        bind.tvTitle.text = resources.getString(R.string.edit_title, name)
+        bind.tvTitle.text = getString(R.string.edit_title, name)
 
         bind.edDate.setOnClickListener {
             clickDatePicker(bind)

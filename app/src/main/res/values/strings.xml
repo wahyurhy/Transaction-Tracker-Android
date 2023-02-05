@@ -48,6 +48,7 @@
     <string name="payment_left">Payment left:</string>
     <string name="info_amount_over">Amount of Payment is greater than Total Payment of %1$s</string>
     <string name="info_number_is_too_short">Number of customer is too short (No.telp: %1$s), do you want to change the data?</string>
+    <string name="info_number_is_empty">Apparently you have not add any number, do you want to add one?</string>
     <string name="data_saved">Data Saved!</string>
     <string name="data_changed">Data Changed!</string>
     <string name="data_deleted">Data Deleted!</string>
