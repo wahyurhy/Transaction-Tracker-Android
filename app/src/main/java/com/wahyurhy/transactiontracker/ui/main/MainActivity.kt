@@ -12,11 +12,8 @@ import com.wahyurhy.transactiontracker.ui.fragments.ProfileFragment
 import com.wahyurhy.transactiontracker.ui.fragments.TransactionFragment
 
 class MainActivity : AppCompatActivity() {
-    
-    private lateinit var binding: ActivityMainBinding
 
-    private lateinit var transactionFragment: TransactionFragment
-    private lateinit var profileFragment: ProfileFragment
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,8 +21,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        transactionFragment = TransactionFragment()
-        profileFragment = ProfileFragment()
+        val transactionFragment = TransactionFragment()
+        val profileFragment = ProfileFragment()
 
         binding.chipAppBar.setItemSelected(R.id.ic_transaction, true)
         makeCurrentFragment(transactionFragment)
