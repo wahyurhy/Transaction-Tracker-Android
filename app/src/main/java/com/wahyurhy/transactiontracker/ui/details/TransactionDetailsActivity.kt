@@ -570,12 +570,31 @@ class TransactionDetailsActivity : AppCompatActivity() {
         showLoading(true)
         val user = Firebase.auth.currentUser
         val uid = user?.uid
+        val calendar: Calendar = Calendar.getInstance()
+        val dateFromLong = Date(date)
+
+        calendar.time = dateFromLong
+        calendar.add(Calendar.MONTH, 1)
+        val nextMonth: Date = calendar.time
+
+        val invertedDateAddOneMonth = nextMonth.time * -1
 
         val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
 
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
             val transactionInfo = TransactionModel(transactionID, name, encryptedWhatsApp, payment, date, status, invertedDate, amountLeft, amountOver, amountCurrently)
+
+            checkIsPayedOffForAddNextMonthTransaction(
+                amountLeft,
+                dbRef,
+                name,
+                encryptedWhatsApp,
+                payment,
+                nextMonth,
+                invertedDateAddOneMonth
+            )
+
             dbRef.child(transactionID).setValue(transactionInfo)
                 .addOnCompleteListener {
                     showLoading(false)

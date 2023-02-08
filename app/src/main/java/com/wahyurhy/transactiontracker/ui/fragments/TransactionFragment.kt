@@ -1,6 +1,13 @@
 package com.wahyurhy.transactiontracker.ui.fragments
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.media.RingtoneManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
@@ -18,6 +26,7 @@ import com.wahyurhy.transactiontracker.adapter.TransactionAdapter
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
+import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -41,8 +50,10 @@ class TransactionFragment : Fragment() {
     private var selectedYear = ""
     private var isSearched = false
     private var isWithMonth = false
+    private var isFirstLaunch = true
     private val searchText = StringBuilder()
     private lateinit var transactionList: ArrayList<TransactionModel>
+    private lateinit var messages: ArrayList<String>
     private lateinit var valueEventListenerGetTransactionData: ValueEventListener
     private lateinit var valueEventListenerSearch: ValueEventListener
     private lateinit var queryGetTransactionData: Query
@@ -64,7 +75,8 @@ class TransactionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        selectedMonth = resources.getStringArray(R.array.filter_sort_by_month)[0].toString() // default month
+        selectedMonth =
+            resources.getStringArray(R.array.filter_sort_by_month)[0].toString() // default month
         _binding = FragmentTransactionBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -186,6 +198,7 @@ class TransactionFragment : Fragment() {
         binding.rvTransaction.layoutManager = LinearLayoutManager(this.activity)
         binding.rvTransaction.setHasFixedSize(true)
         transactionList = arrayListOf()
+        messages = arrayListOf()
     }
 
     private fun getSearchData(text: String) {
@@ -194,9 +207,10 @@ class TransactionFragment : Fragment() {
     }
 
     private fun setCurrentYear() {
-        for (i in 0..11){
+        for (i in 0..11) {
             when (selectedTimeSpan) {
-                resources.getStringArray(R.array.filter_sort_by_periode)[i].toString() -> getYear = i + 1
+                resources.getStringArray(R.array.filter_sort_by_periode)[i].toString() -> getYear =
+                    i + 1
             }
             binding.timeShowSpinner.setSelection(getYear - 1)
         }
@@ -209,9 +223,14 @@ class TransactionFragment : Fragment() {
                     for (i in 0..11) {
                         when (binding.timeShowSpinner.selectedItem) {
                             resources.getStringArray(R.array.filter_sort_by_periode)[i].toString() -> {
-                                binding.tvDesc.text = getString(R.string.info_revenue, resources.getStringArray(R.array.filter_sort_by_periode)[i].toString())
-                                selectedTimeSpan = resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
-                                selectedYear = resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
+                                binding.tvDesc.text = getString(
+                                    R.string.info_revenue,
+                                    resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
+                                )
+                                selectedTimeSpan =
+                                    resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
+                                selectedYear =
+                                    resources.getStringArray(R.array.filter_sort_by_periode)[i].toString()
 
                                 if (isWithMonth) {
                                     var bulan = 0
@@ -260,15 +279,21 @@ class TransactionFragment : Fragment() {
                     for (i in 0..12) {
                         when (binding.monthSpinner.selectedItem) {
                             resources.getStringArray(R.array.filter_sort_by_month)[i].toString() -> {
-                                selectedMonth = resources.getStringArray(R.array.filter_sort_by_month)[i].toString()
+                                selectedMonth =
+                                    resources.getStringArray(R.array.filter_sort_by_month)[i].toString()
 
                                 if (i == 0) {
                                     isWithMonth = false
-                                    binding.tvDesc.text = getString(R.string.info_revenue, selectedYear)
+                                    binding.tvDesc.text =
+                                        getString(R.string.info_revenue, selectedYear)
                                     getRangeDate(Calendar.YEAR, 0)
                                 } else {
                                     isWithMonth = true
-                                    binding.tvDesc.text = getString(R.string.info_revenue_with_month, resources.getStringArray(R.array.filter_sort_by_month)[i].toString(), selectedYear)
+                                    binding.tvDesc.text = getString(
+                                        R.string.info_revenue_with_month,
+                                        resources.getStringArray(R.array.filter_sort_by_month)[i].toString(),
+                                        selectedYear
+                                    )
                                     getRangeDate(Calendar.DAY_OF_MONTH, i - 1)
                                 }
                             }
@@ -336,7 +361,8 @@ class TransactionFragment : Fragment() {
                                 transactionData =
                                     transactionSnap.getValue(TransactionModel::class.java)
 
-                                calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+                                calendar?.timeInMillis =
+                                    transactionData!!.dueDateTransaction as Long
 
                                 year = dateFormat?.format(calendar!!.time)
 
@@ -346,6 +372,25 @@ class TransactionFragment : Fragment() {
                                     }
                                 } else {
                                     if (year == selectedYear) {
+                                        if (isFirstLaunch) {
+                                            if (transactionData!!.amountLeft!! > 0.0) {
+                                                if (transactionData!!.amountLeft!! < transactionData!!.paymentAmount!!) {
+                                                    messages.add(
+                                                        resources.getString(
+                                                            R.string.message,
+                                                            transactionData!!.name,
+                                                            formatRupiah?.format(
+                                                                transactionData!!.amountLeft
+                                                            )?.replace(",00", "")
+                                                        )
+                                                    )
+                                                    showCurrentNotification(
+                                                        requireContext(),
+                                                        messages
+                                                    )
+                                                }
+                                            }
+                                        }
                                         transactionList.add(transactionData!!)
                                     }
                                 }
@@ -356,7 +401,8 @@ class TransactionFragment : Fragment() {
                                 transactionData =
                                     transactionSnap.getValue(TransactionModel::class.java)
 
-                                calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+                                calendar?.timeInMillis =
+                                    transactionData!!.dueDateTransaction as Long
 
                                 year = dateFormat?.format(calendar!!.time)
 
@@ -378,7 +424,8 @@ class TransactionFragment : Fragment() {
                                 transactionData =
                                     transactionSnap.getValue(TransactionModel::class.java)
 
-                                calendar?.timeInMillis = transactionData!!.dueDateTransaction as Long
+                                calendar?.timeInMillis =
+                                    transactionData!!.dueDateTransaction as Long
 
                                 year = dateFormat?.format(calendar!!.time)
 
@@ -425,6 +472,7 @@ class TransactionFragment : Fragment() {
                         tvNoData.visibility = View.VISIBLE
                     }
                 }
+                isFirstLaunch = false
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -433,6 +481,54 @@ class TransactionFragment : Fragment() {
             }
         }
         queryGetTransactionData.addValueEventListener(valueEventListenerGetTransactionData)
+    }
+
+    private fun showCurrentNotification(context: Context, messages: List<String>) {
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            requireContext(),
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val sb = java.lang.StringBuilder()
+        messages.forEachIndexed { index, value -> sb.append("${index + 1}. $value\n") }
+        val joinedStringMessage = sb.toString().removeSuffix(", ")
+
+        val mNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val mBuilder = NotificationCompat.Builder(requireContext(), CHANNEL_NOTIFICATION_INSTANT_ID)
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_notification))
+            .setContentTitle(resources.getString(R.string.info_not_yet_full))
+            .setContentText(joinedStringMessage)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(joinedStringMessage))
+            .setAutoCancel(true)
+
+        /*
+        Untuk android Oreo ke atas perlu menambahkan notification channel
+        */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            /* Create or update. */
+            val channel = NotificationChannel(
+                CHANNEL_NOTIFICATION_INSTANT_ID,
+                CHANNEL_NOTIFICATION_INSTANT_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            channel.description = CHANNEL_NOTIFICATION_INSTANT_NAME
+            mBuilder.setChannelId(CHANNEL_NOTIFICATION_INSTANT_ID)
+            mNotificationManager.createNotificationChannel(channel)
+        }
+
+        val notification = mBuilder.build()
+
+        mNotificationManager.notify(NOTIFICATION_INSTANT_ID, notification)
     }
 
     private fun showInAdapter(showRevenue: Boolean) {
@@ -470,7 +566,8 @@ class TransactionFragment : Fragment() {
     }
 
     private fun showTotalRevenue() {
-        totalRevenue = transactionList.fold(0.0) { acc, amountPayed -> acc + amountPayed.amountPayed as Double }
+        totalRevenue =
+            transactionList.fold(0.0) { acc, amountPayed -> acc + amountPayed.amountPayed as Double }
         totalTransaction = transactionList.size
 
         binding.numberOfRevenue.text = formatRupiah?.format(totalRevenue)?.replace(",00", "")
