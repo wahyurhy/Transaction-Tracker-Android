@@ -27,6 +27,7 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityTransactionDetailsBinding
 import com.wahyurhy.transactiontracker.databinding.EditDialogBinding
+import com.wahyurhy.transactiontracker.notification.MonthlyCreateTransaction
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -36,6 +37,8 @@ import java.util.*
 class TransactionDetailsActivity : AppCompatActivity() {
 
     private val TAG = TransactionDetailsActivity::class.java.simpleName
+
+    private lateinit var broadcastReceiver: MonthlyCreateTransaction
 
     private var date: Long = 0
     private var invertedDate: Long = 0
@@ -55,6 +58,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
         val dateInvertedExtra = intent.getLongExtra(DATE_INVERTED_EXTRA, 0)
         val whatsAppExtra = intent.getStringExtra(WHATS_APP_EXTRA).toString()
 
+        broadcastReceiver = MonthlyCreateTransaction()
+
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -64,7 +69,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         binding.btnEdit.setOnClickListener {
-            openEditDialog(nameExtra, transactionIDExtra)
+            openEditDialog(nameExtra, transactionIDExtra, broadcastReceiver)
         }
 
         binding.edNominalPayment.apply {
@@ -90,7 +95,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 dateInvertedExtra,
                 amountLeft,
                 amountOver,
-                amountCurrently
+                amountCurrently,
+                broadcastReceiver
             )
         }
 
@@ -128,13 +134,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
                     Log.e(TAG, "onCreate: ${e.message}")
                 }
             } else {
+                val broadcastReceiver = MonthlyCreateTransaction()
                 Snackbar.make(binding.snackbarLayout, messageSnackbar, Snackbar.LENGTH_LONG)
                     .setDuration(7000)
                     .setTextMaxLines(5)
                     .setAnchorView(binding.btnSave)
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                     .setAction(getString(R.string.change_data)) {
-                        openEditDialog(nameExtra, transactionIDExtra)
+                        openEditDialog(nameExtra, transactionIDExtra, broadcastReceiver)
                     }
                     .show()
             }
@@ -292,7 +299,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
         dateInverted: Long,
         amountLeft: Double,
         amountOver: Double,
-        amountPayed: Double
+        amountPayed: Double,
+        broadcastReceiver: MonthlyCreateTransaction
     ) {
         showLoading(true)
         val user = Firebase.auth.currentUser
@@ -319,12 +327,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 encryptedWhatsApp,
                 amount,
                 nextMonth,
-                invertedDateAddOneMonth
+                invertedDateAddOneMonth,
+                broadcastReceiver
             )
 
             dbRef.child(transactionID).setValue(transaction)
                 .addOnCompleteListener {
                     showLoading(false)
+                    broadcastReceiver.setMonthlyNotification(this, name, amount, date)
                     Toast.makeText(this, getString(R.string.data_saved), Toast.LENGTH_SHORT).show()
                     finish()
                 }
@@ -342,7 +352,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
         encryptedWhatsApp: String,
         amount: Double,
         nextMonth: Date,
-        invertedDateAddOneMonth: Long
+        invertedDateAddOneMonth: Long,
+        broadcastReceiver: MonthlyCreateTransaction
     ) {
         val status = intent.getBooleanExtra(STATUS_EXTRA, false)
 
@@ -360,6 +371,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 0.0,
                 0.0
             )
+            broadcastReceiver.setMonthlyNotification(this, name, amount, nextMonth.time)
             dbRef.child(newTransactionID).setValue(transactionAddOneMonth)
         }
     }
@@ -384,7 +396,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         binding.edNominalPayment.setText(showAmountCurrently.toString())
     }
 
-    private fun openEditDialog(name: String, transactionID: String) {
+    private fun openEditDialog(name: String, transactionID: String, broadcastReceiver: MonthlyCreateTransaction) {
         val mDialog = AlertDialog.Builder(this)
         val bind: EditDialogBinding = EditDialogBinding.inflate(layoutInflater)
         mDialog.setView(bind.root)
@@ -430,7 +442,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 invertedDate,
                 amountLeft = bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble() - amountCurrently,
                 amountOver,
-                amountCurrently
+                amountCurrently,
+                broadcastReceiver
             )
             alertDialog.dismiss()
             val intentRefresh = Intent(this, TransactionDetailsActivity::class.java)
@@ -520,6 +533,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
                     invertedDate = date * -1
                 }
 
+                val broadcastReceiver = MonthlyCreateTransaction()
+
                 bind.btnUpdate.setOnClickListener {
                     updateTransactionData(
                         transactionIDExtra,
@@ -531,7 +546,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
                         invertedDate,
                         amountLeft = bind.edAmount.text.toString().replace("[Rp,. ]".toRegex(), "").toDouble() - amountCurrently,
                         amountOver,
-                        amountCurrently
+                        amountCurrently,
+                        broadcastReceiver
                     )
                     alertDialog.dismiss()
                     val intentRefresh = Intent(this, TransactionDetailsActivity::class.java)
@@ -565,7 +581,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
         invertedDate: Long,
         amountLeft: Double,
         amountOver: Double,
-        amountCurrently: Double
+        amountCurrently: Double,
+        broadcastReceiver: MonthlyCreateTransaction
     ) {
         showLoading(true)
         val user = Firebase.auth.currentUser
@@ -592,12 +609,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 encryptedWhatsApp,
                 payment,
                 nextMonth,
-                invertedDateAddOneMonth
+                invertedDateAddOneMonth,
+                broadcastReceiver
             )
 
             dbRef.child(transactionID).setValue(transactionInfo)
                 .addOnCompleteListener {
                     showLoading(false)
+                    broadcastReceiver.setMonthlyNotification(this, name, payment, calendar.time.time)
                     Toast.makeText(this, getString(R.string.data_changed), Toast.LENGTH_SHORT).show()
                     finish()
                 }

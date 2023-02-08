@@ -103,7 +103,6 @@
     <string name="no_answer">Tidak</string>
     <string name="total_transaction">Total Transaksi: %1$s</string>
     <string name="due_date_notification_content">%1$s Telah Jatuh Tempo</string>
-    <string name="notif_today_due_date_title">Tanggal jatuh tempo hari ini</string>
     <string name="still_left">Kurang %1$s</string>
     <string name="over_paid">Lebih %1$s</string>
     <string name="info_revenue_with_month">Pendapatan %1$s %2$s</string>
