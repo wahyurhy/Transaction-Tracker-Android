@@ -14,7 +14,7 @@ import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.util.*
 
-class MonthlyCreateTransaction : BroadcastReceiver() {
+class MonthlyNotification : BroadcastReceiver() {
 
     private var formatRupiah: NumberFormat? = null
 
@@ -29,7 +29,7 @@ class MonthlyCreateTransaction : BroadcastReceiver() {
     fun setMonthlyNotification(context: Context, name: String, amount: Double, dueDate: Long) {
         formatRupiah = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
 
-        val intent = Intent(context, MonthlyCreateTransaction::class.java)
+        val intent = Intent(context, MonthlyNotification::class.java)
         intent.putExtra("title", "Jatuh tempo untuk $name")
         intent.putExtra(
             "message",
@@ -37,7 +37,7 @@ class MonthlyCreateTransaction : BroadcastReceiver() {
         )
 
         val pendingIntent =
-            PendingIntent.getBroadcast(context, ID_REPEATING, intent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, ID_REPEATING, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val interval = 30L * 24 * 60 * 60 * 1000
         val targetHour = 8
@@ -59,7 +59,7 @@ class MonthlyCreateTransaction : BroadcastReceiver() {
 
     fun cancelAlarm(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, MonthlyCreateTransaction::class.java)
+        val intent = Intent(context, MonthlyNotification::class.java)
         val requestCode = ID_REPEATING
         val pendingIntent =
             PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
@@ -106,7 +106,7 @@ class MonthlyCreateTransaction : BroadcastReceiver() {
         val intent = Intent(context, MainActivity::class.java)
         return TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(intent)
-            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
     }
 }

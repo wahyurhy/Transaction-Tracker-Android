@@ -24,6 +24,13 @@ class MainActivity : AppCompatActivity() {
         val transactionFragment = TransactionFragment()
         val profileFragment = ProfileFragment()
 
+        initAppBar(transactionFragment, profileFragment)
+    }
+
+    private fun initAppBar(
+        transactionFragment: TransactionFragment,
+        profileFragment: ProfileFragment
+    ) {
         binding.chipAppBar.setItemSelected(R.id.ic_transaction, true)
         makeCurrentFragment(transactionFragment)
         binding.chipAppBar.setOnItemSelectedListener {

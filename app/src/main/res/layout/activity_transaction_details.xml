@@ -39,9 +39,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="14dp"
-                android:padding="10dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/go_to_whatsapp"
+                android:padding="10dp"
                 android:src="@drawable/ic_whatsapp_green" />
 
             <TextView
@@ -75,11 +75,11 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
+                android:contentDescription="@string/delete_this_transaction"
                 android:padding="5dp"
                 android:src="@drawable/ic_delete"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/delete_this_transaction" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/btnEdit"
@@ -88,11 +88,11 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
+                android:contentDescription="@string/change_data"
                 android:padding="5dp"
                 android:src="@drawable/ic_edit"
                 app:layout_constraintEnd_toStartOf="@id/btnDelete"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/change_data" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvName"
@@ -237,13 +237,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="15dp"
+                        android:contentDescription="@string/delete_number_of_payment_amount"
                         android:padding="5dp"
                         android:src="@drawable/ic_delete_text_white"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@id/constraintLayout"
                         app:layout_constraintEnd_toEndOf="@id/constraintLayout"
-                        app:layout_constraintTop_toTopOf="@id/constraintLayout"
-                        android:contentDescription="@string/delete_number_of_payment_amount" />
+                        app:layout_constraintTop_toTopOf="@id/constraintLayout" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -303,6 +303,19 @@
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     tools:ignore="HardcodedText" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/isTodaySwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvAmountLeft"
+                    android:layout_alignParentEnd="true"
+                    android:checked="true"
+                    android:fontFamily="@font/poppins_medium"
+                    android:paddingTop="20dp"
+                    android:text="@string/is_today_transaction"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
             </RelativeLayout>
 

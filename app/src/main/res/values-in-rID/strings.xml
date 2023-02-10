@@ -108,5 +108,11 @@
     <string name="info_revenue_with_month">Pendapatan %1$s %2$s</string>
     <string name="info_number_is_empty">Sepertinya Anda belum menambahkan nomor WhatsApp, apakah Anda ingin menambahkannya?</string>
     <string name="info_not_yet_full">Berikut pelanggan yang masih belum membayar penuh</string>
-    <string name="message">%1$s : Kurang %2$s</string>
+    <string name="messageLeftInfo">%1$s : Kurang %2$s</string>
+    <string name="messagePassInfo">%1$s lewat %2$s bulan</string>
+    <string name="detail_messages">Detail Pesan</string>
+    <string name="notification">Notifikasi</string>
+    <string name="empty_data">Tidak ada data</string>
+    <string name="text_copied">Teks berhasil disalin</string>
+    <string name="is_today_transaction">"Apakah transaksi hari ini? "</string>
 </resources>

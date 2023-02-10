@@ -46,13 +46,13 @@
                         tools:ignore="HardcodedText" />
 
                     <ImageView
-                        android:id="@+id/printButton"
+                        android:id="@+id/notifButton"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="end"
                         android:layout_marginEnd="14dp"
                         android:backgroundTint="@color/white"
-                        android:src="@drawable/ic_print"
+                        android:src="@drawable/ic_notification_button"
                         android:contentDescription="@string/print_data_transactions" />
 
                 </Toolbar>

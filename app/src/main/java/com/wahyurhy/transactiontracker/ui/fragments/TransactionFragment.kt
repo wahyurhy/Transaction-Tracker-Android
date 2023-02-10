@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
@@ -25,12 +26,16 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.adapter.TransactionAdapter
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
+import com.wahyurhy.transactiontracker.ui.details.DetailMessagesActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
 import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.Instant
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class TransactionFragment : Fragment() {
@@ -87,6 +92,13 @@ class TransactionFragment : Fragment() {
         calendar = Calendar.getInstance()
         dateFormat = SimpleDateFormat("yyyy", Locale("in", "ID"))
         formatRupiah = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+
+        binding.notifButton.setOnClickListener {
+            messages = arrayListOf()
+            isFirstLaunch = true
+            getTransactionData()
+            showCurrentNotification(requireContext(), messages)
+        }
 
         showUserName()
         setCurrentYear()
@@ -368,29 +380,12 @@ class TransactionFragment : Fragment() {
 
                                 if (isWithMonth) {
                                     if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData!!.dueDateTransaction!! <= dateEnd) {
+                                        showInstantNotification()
                                         transactionList.add(transactionData!!)
                                     }
                                 } else {
                                     if (year == selectedYear) {
-                                        if (isFirstLaunch) {
-                                            if (transactionData!!.amountLeft!! > 0.0) {
-                                                if (transactionData!!.amountLeft!! < transactionData!!.paymentAmount!!) {
-                                                    messages.add(
-                                                        resources.getString(
-                                                            R.string.message,
-                                                            transactionData!!.name,
-                                                            formatRupiah?.format(
-                                                                transactionData!!.amountLeft
-                                                            )?.replace(",00", "")
-                                                        )
-                                                    )
-                                                    showCurrentNotification(
-                                                        requireContext(),
-                                                        messages
-                                                    )
-                                                }
-                                            }
-                                        }
+                                        showInstantNotification()
                                         transactionList.add(transactionData!!)
                                     }
                                 }
@@ -409,10 +404,12 @@ class TransactionFragment : Fragment() {
                                 if (transactionData!!.stateTransaction!!) {
                                     if (isWithMonth) {
                                         if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData!!.dueDateTransaction!! <= dateEnd) {
+                                            showInstantNotification()
                                             transactionList.add(transactionData!!)
                                         }
                                     } else {
                                         if (year == selectedYear) {
+                                            showInstantNotification()
                                             transactionList.add(transactionData!!)
                                         }
                                     }
@@ -432,10 +429,12 @@ class TransactionFragment : Fragment() {
                                 if (!transactionData!!.stateTransaction!!) {
                                     if (isWithMonth) {
                                         if (transactionData!!.dueDateTransaction!! > dateStart - 86400000 && transactionData!!.dueDateTransaction!! <= dateEnd) {
+                                            showInstantNotification()
                                             transactionList.add(transactionData!!)
                                         }
                                     } else {
                                         if (year == selectedYear) {
+                                            showInstantNotification()
                                             transactionList.add(transactionData!!)
                                         }
                                     }
@@ -483,18 +482,80 @@ class TransactionFragment : Fragment() {
         queryGetTransactionData.addValueEventListener(valueEventListenerGetTransactionData)
     }
 
-    private fun showCurrentNotification(context: Context, messages: List<String>) {
-        val intent = Intent(requireContext(), MainActivity::class.java)
+    private fun showInstantNotification() {
+        if (isFirstLaunch) {
+            if (transactionData!!.amountLeft!! > 0.0) {
+                if (transactionData!!.amountLeft!! < transactionData!!.paymentAmount!!) {
+                    messages.add(
+                        resources.getString(
+                            R.string.messageLeftInfo,
+                            transactionData!!.name,
+                            formatRupiah?.format(
+                                transactionData!!.amountLeft
+                            )?.replace(",00", "")
+                        )
+                    )
+                    showCurrentNotification(
+                        requireContext(),
+                        messages
+                    )
+                }
+            }
+            val dueDate = transactionData!!.dueDateTransaction as Long
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val transactionInstant = Instant.ofEpochMilli(dueDate)
+                val currentInstant = Instant.now()
+                val duration = Duration.between(transactionInstant, currentInstant)
+                val months = duration.toDays() / 30
+                checkMonth(months)
+            } else {
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = dueDate
+
+                val now = Calendar.getInstance()
+                val months = (now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR)) * 12 + now.get(Calendar.MONTH) - calendar.get(Calendar.MONTH)
+                checkMonth(months.toLong())
+            }
+        }
+    }
+
+    private fun checkMonth(months: Long) {
+        if (months >= 1) {
+            if (transactionData!!.stateTransaction == false) {
+                messages.add(
+                    resources.getString(
+                        R.string.messagePassInfo,
+                        transactionData!!.name,
+                        months.toString()
+                    )
+                )
+                showCurrentNotification(
+                    requireContext(),
+                    messages
+                )
+            }
+        }
+    }
+
+    private fun showCurrentNotification(context: Context, messages: ArrayList<String>) {
+        val sb = java.lang.StringBuilder()
+        messages.forEachIndexed { index, value -> sb.append("${index + 1}. $value\n") }
+        val joinedStringMessage = sb.toString().removeSuffix(", ")
+
+        val intent = Intent(requireContext(), DetailMessagesActivity::class.java)
+
+        if (messages.isEmpty()) {
+            intent.putExtra("messages", getString(R.string.empty_data))
+        } else {
+            intent.putExtra("messages", joinedStringMessage)
+        }
+
         val pendingIntent = PendingIntent.getActivity(
             requireContext(),
             0,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-
-        val sb = java.lang.StringBuilder()
-        messages.forEachIndexed { index, value -> sb.append("${index + 1}. $value\n") }
-        val joinedStringMessage = sb.toString().removeSuffix(", ")
 
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

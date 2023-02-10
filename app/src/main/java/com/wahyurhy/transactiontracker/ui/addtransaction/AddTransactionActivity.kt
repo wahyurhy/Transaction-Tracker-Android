@@ -21,7 +21,7 @@ import com.google.firebase.ktx.Firebase
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityAddTransactionBinding
-import com.wahyurhy.transactiontracker.notification.MonthlyCreateTransaction
+import com.wahyurhy.transactiontracker.notification.MonthlyNotification
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,7 +30,7 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddTransactionBinding
 
-    private lateinit var broadcastReceiver: MonthlyCreateTransaction
+    private lateinit var broadcastReceiver: MonthlyNotification
     private var user: FirebaseUser? = null
     private var uid: String? = null
     private var sdf: SimpleDateFormat? = null
@@ -135,7 +135,7 @@ class AddTransactionActivity : AppCompatActivity() {
                         0.0
                     )
 
-                    broadcastReceiver = MonthlyCreateTransaction()
+                    broadcastReceiver = MonthlyNotification()
 
                     if (dbRef != null) {
                         completeListener =
