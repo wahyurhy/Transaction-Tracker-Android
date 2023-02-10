@@ -688,8 +688,6 @@ class TransactionFragment : Fragment() {
         if (isSearched) {
             querySearch.removeEventListener(valueEventListenerSearch)
             getSearchData(searchText.toString())
-        } else {
-            getTransactionData()
         }
     }
 
