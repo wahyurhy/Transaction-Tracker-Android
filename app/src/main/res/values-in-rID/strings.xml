@@ -115,4 +115,6 @@
     <string name="empty_data">Tidak ada data</string>
     <string name="text_copied">Teks berhasil disalin</string>
     <string name="is_today_transaction">"Apakah transaksi hari ini? "</string>
+    <string name="no_notification_info">Tidak ada notifikasi</string>
+    <string name="message_is_empty">Alhamdulillah tidak ada tunggakan</string>
 </resources>

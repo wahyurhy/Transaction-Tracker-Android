@@ -122,4 +122,6 @@
     <string name="empty_data">Empty Data</string>
     <string name="text_copied">Text copied to clipboard</string>
     <string name="is_today_transaction">Is today transaction? </string>
+    <string name="no_notification_info">There is no notification</string>
+    <string name="message_is_empty">Alhamdulillah there are no arrears</string>
 </resources>

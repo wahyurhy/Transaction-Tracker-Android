@@ -150,6 +150,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         binding.isTodaySwitch.setOnCheckedChangeListener { _, isChecked ->
             isToday = isChecked
+            isEnableBtnSave(isChecked)
         }
     }
 
@@ -214,6 +215,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 binding.tvAmountCurrently.text = getString(R.string.rupiah_s_edit_text, s) // Rp s
                 Log.d(TAG, "onTextChanged: value s = $s")
                 val shouldPayAmount = intent.getDoubleExtra(AMOUNT_EXTRA, 0.0).toString()
+                val amountPayed = intent.getDoubleExtra(AMOUNT_PAYED, 0.0).toString().dropLast(2)
+                Log.d(TAG, "onTextChanged: value amountPayed = $amountPayed")
 
                 charSequenceEmptyChecker(s, shouldPayAmount)
 
@@ -252,7 +255,11 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 when {
                     s.length > 1 -> {
                         showDeleteText()
-                        isEnableBtnSave(true)
+                        if (amountPayed != s.toString().replace("[.]".toRegex(), "")) {
+                            isEnableBtnSave(true)
+                        } else {
+                            isEnableBtnSave(false)
+                        }
                     }
                     s.isEmpty() -> {
                         binding.deleteText.visibility = View.GONE

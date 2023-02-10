@@ -311,10 +311,14 @@
                     android:layout_below="@id/tvAmountLeft"
                     android:layout_alignParentEnd="true"
                     android:fontFamily="@font/poppins_medium"
+                    android:paddingStart="0dp"
                     android:paddingTop="20dp"
+                    android:paddingEnd="-40dp"
                     android:text="@string/is_today_transaction"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:thumb="@drawable/thumb"
+                    app:track="@null" />
 
             </RelativeLayout>
 

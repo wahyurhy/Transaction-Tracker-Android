@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
@@ -28,14 +27,12 @@ import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
 import com.wahyurhy.transactiontracker.ui.details.DetailMessagesActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
-import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class TransactionFragment : Fragment() {
@@ -194,7 +191,7 @@ class TransactionFragment : Fragment() {
                         }
                     }
 
-                    getSearchData(newText)
+                    getSearchData(newText.trim())
                     searchText.replace(0, searchText.length, newText)
                     isSearched = true
                 } else {
@@ -513,7 +510,10 @@ class TransactionFragment : Fragment() {
                 calendar.timeInMillis = dueDate
 
                 val now = Calendar.getInstance()
-                val months = (now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR)) * 12 + now.get(Calendar.MONTH) - calendar.get(Calendar.MONTH)
+                val months =
+                    (now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR)) * 12 + now.get(Calendar.MONTH) - calendar.get(
+                        Calendar.MONTH
+                    )
                 checkMonth(months.toLong())
             }
         }
@@ -544,12 +544,24 @@ class TransactionFragment : Fragment() {
 
         val intent = Intent(requireContext(), DetailMessagesActivity::class.java)
 
+        var title = resources.getString(R.string.info_not_yet_full)
+
         if (messages.isEmpty()) {
             intent.putExtra("messages", getString(R.string.empty_data))
+            title = getString(R.string.message_is_empty)
+            startNotification(intent, context, title, getString(R.string.empty_data))
         } else {
             intent.putExtra("messages", joinedStringMessage)
+            startNotification(intent, context, title, joinedStringMessage)
         }
+    }
 
+    private fun startNotification(
+        intent: Intent,
+        context: Context,
+        title: String,
+        joinedStringMessage: String
+    ) {
         val pendingIntent = PendingIntent.getActivity(
             requireContext(),
             0,
@@ -564,7 +576,7 @@ class TransactionFragment : Fragment() {
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_notification)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_notification))
-            .setContentTitle(resources.getString(R.string.info_not_yet_full))
+            .setContentTitle(title)
             .setContentText(joinedStringMessage)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
