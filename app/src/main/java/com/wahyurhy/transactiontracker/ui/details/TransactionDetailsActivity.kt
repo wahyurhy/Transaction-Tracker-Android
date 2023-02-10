@@ -313,7 +313,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
         val calendar: Calendar = Calendar.getInstance()
         var dateFromLong = Date(date)
 
-        isToday = binding.isTodaySwitch.isChecked
         if (isToday) {
             val currentDate = Calendar.getInstance().time.time
             dateFromLong = Date(currentDate)
