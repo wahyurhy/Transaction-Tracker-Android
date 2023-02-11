@@ -33,6 +33,7 @@
     <string name="today_s_transaction_date">Today\'s Transaction Date</string>
     <string name="save_btn">Save</string>
     <string name="add_transaction">Add Transaction</string>
+    <string name="success_to_mark">Success to mark as paid off</string>
     <string name="rupiah_s_edit_text">Rp%1$s</string>
     <string name="payed_off">Paid Off!</string>
     <string name="payed_over" formatted="true">Paid off and\nover %1$s</string>
@@ -124,4 +125,6 @@
     <string name="is_today_transaction">Is today transaction? </string>
     <string name="no_notification_info">There is no notification</string>
     <string name="message_is_empty">Alhamdulillah there are no arrears</string>
+    <string name="mark_as_paid_off">Mark as paid off</string>
+    <string name="choose_action_info">Choose as action</string>
 </resources>

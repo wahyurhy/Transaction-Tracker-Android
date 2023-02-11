@@ -117,4 +117,7 @@
     <string name="is_today_transaction">"Apakah transaksi hari ini? "</string>
     <string name="no_notification_info">Tidak ada notifikasi</string>
     <string name="message_is_empty">Alhamdulillah tidak ada tunggakan</string>
+    <string name="mark_as_paid_off">Tandai sudah lunas</string>
+    <string name="choose_action_info">Pilih aksi</string>
+    <string name="success_to_mark">Berhasil melunaskan</string>
 </resources>

@@ -109,7 +109,12 @@ class TransactionFragment : Fragment() {
 
     private fun setSwipeRefreshListener() {
         binding.swipeRefresh.setOnRefreshListener {
-            getTransactionData()
+            if (isSearched) {
+                querySearch.removeEventListener(valueEventListenerSearch)
+                getSearchData(searchText.toString())
+            } else {
+                getTransactionData()
+            }
             binding.swipeRefresh.isRefreshing = false
         }
     }
@@ -605,7 +610,8 @@ class TransactionFragment : Fragment() {
     }
 
     private fun showInAdapter(showRevenue: Boolean) {
-        val mAdapter = TransactionAdapter(transactionList)
+        val mAdapter = TransactionAdapter()
+        mAdapter.submitList(transactionList)
 
         binding.rvTransaction.adapter = mAdapter
 
