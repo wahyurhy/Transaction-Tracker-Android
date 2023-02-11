@@ -1,5 +1,6 @@
 package com.wahyurhy.transactiontracker.ui.fragments
 
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -14,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
@@ -25,6 +27,7 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.adapter.TransactionAdapter
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
+import com.wahyurhy.transactiontracker.notification.MonthlyNotification
 import com.wahyurhy.transactiontracker.ui.details.DetailMessagesActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
 import com.wahyurhy.transactiontracker.utils.*
@@ -109,12 +112,7 @@ class TransactionFragment : Fragment() {
 
     private fun setSwipeRefreshListener() {
         binding.swipeRefresh.setOnRefreshListener {
-            if (isSearched) {
-                querySearch.removeEventListener(valueEventListenerSearch)
-                getSearchData(searchText.toString())
-            } else {
-                getTransactionData()
-            }
+            getTransactionData()
             binding.swipeRefresh.isRefreshing = false
         }
     }
@@ -197,7 +195,7 @@ class TransactionFragment : Fragment() {
                     }
 
                     getSearchData(newText.trim())
-                    searchText.replace(0, searchText.length, newText)
+                    searchText.replace(0, searchText.length, newText.trim())
                     isSearched = true
                 } else {
                     getTransactionData()
@@ -637,10 +635,131 @@ class TransactionFragment : Fragment() {
             }
         })
 
+        mAdapter.setOnLongItemClickListener(object : TransactionAdapter.onLongItemClickListener {
+            override fun onLongItemClick(position: Int) {
+
+                val idTransaction = transactionList[position].id.toString()
+                val name = transactionList[position].name.toString()
+                val dueDateTransaction = transactionList[position].dueDateTransaction as Long
+                val invertedDate = transactionList[position].invertedDate as Long
+                val paymentAmount = transactionList[position].paymentAmount
+                val whatsAppNumber = transactionList[position].whatsAppNumber.toString()
+                val stateTransaction = transactionList[position].stateTransaction as Boolean
+
+                showDialog(idTransaction, name, dueDateTransaction, invertedDate, paymentAmount, whatsAppNumber, stateTransaction)
+            }
+        })
+
         binding.rvTransaction.visibility = View.VISIBLE
 
         if (showRevenue) {
             showTotalRevenue()
+        }
+    }
+
+    private fun showDialog(
+        idTransaction: String,
+        name: String,
+        dueDateTransaction: Long,
+        invertedDate: Long,
+        paymentAmount: Double?,
+        whatsAppNumber: String,
+        stateTransaction: Boolean
+    ) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(getString(R.string.choose_action_info))
+        builder.setPositiveButton(getString(R.string.mark_as_paid_off)) { _, _ ->
+            markAsDone(idTransaction, name, dueDateTransaction, invertedDate, paymentAmount, whatsAppNumber, stateTransaction)
+        }
+        builder.setNegativeButton(getString(R.string.cancel)) { _, _ -> }
+        builder.show()
+    }
+
+    private fun markAsDone(
+        idTransaction: String,
+        name: String,
+        dueDateTransaction: Long,
+        invertedDate: Long,
+        paymentAmount: Double?,
+        whatsAppNumber: String,
+        stateTransaction: Boolean
+    ) {
+        binding.apply {
+            progressBar.visibility = View.VISIBLE
+        }
+        val user = Firebase.auth.currentUser
+        val uid = user?.uid
+
+        val broadcastReceiver = MonthlyNotification()
+
+        val calendar: Calendar = Calendar.getInstance()
+        val dateFromLong = Date(dueDateTransaction)
+        calendar.time = dateFromLong
+        calendar.add(Calendar.MONTH, 1)
+        val nextMonth: Date = calendar.time
+
+        val invertedDateAddOneMonth = nextMonth.time * -1
+
+        if (uid != null) {
+            val dbRef = FirebaseDatabase.getInstance().getReference(uid)
+            val transactionInfo = TransactionModel(idTransaction, name, whatsAppNumber, paymentAmount, dueDateTransaction, true, invertedDate, 0.0, 0.0, paymentAmount)
+
+            createAddNextMonthTransaction(
+                dbRef,
+                name,
+                whatsAppNumber,
+                paymentAmount,
+                nextMonth,
+                invertedDateAddOneMonth,
+                stateTransaction,
+                broadcastReceiver
+            )
+
+            dbRef.child(idTransaction).setValue(transactionInfo)
+                .addOnCompleteListener {
+                    binding.apply {
+                        progressBar.visibility = View.GONE
+                    }
+                    broadcastReceiver.setMonthlyNotification(requireContext(), name, paymentAmount!!.toDouble(), calendar.time.time)
+                    Toast.makeText(requireContext(), getString(R.string.success_to_mark), Toast.LENGTH_SHORT).show()
+                    getSearchData(name)
+                }
+                .addOnFailureListener { err ->
+                    binding.apply {
+                        progressBar.visibility = View.GONE
+                    }
+                    Toast.makeText(requireContext(), "Error ${err.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun createAddNextMonthTransaction(
+        dbRef: DatabaseReference,
+        name: String,
+        whatsAppNumber: String,
+        paymentAmount: Double?,
+        nextMonth: Date,
+        invertedDateAddOneMonth: Long,
+        stateTransaction: Boolean,
+        broadcastReceiver: MonthlyNotification
+    ) {
+
+        if (!stateTransaction) {
+            val newTransactionID = dbRef.push().key!! + "0"
+            val transactionAddOneMonth = TransactionModel(
+                newTransactionID,
+                name,
+                whatsAppNumber,
+                paymentAmount,
+                nextMonth.time,
+                false,
+                invertedDateAddOneMonth,
+                paymentAmount,
+                0.0,
+                0.0
+            )
+            broadcastReceiver.setMonthlyNotification(requireContext(), name, paymentAmount!!.toDouble(), nextMonth.time)
+            dbRef.child(newTransactionID).setValue(transactionAddOneMonth)
         }
     }
 

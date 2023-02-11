@@ -120,4 +120,5 @@
     <string name="mark_as_paid_off">Tandai sudah lunas</string>
     <string name="choose_action_info">Pilih aksi</string>
     <string name="success_to_mark">Berhasil melunaskan</string>
+    <string name="cancel">batal</string>
 </resources>
