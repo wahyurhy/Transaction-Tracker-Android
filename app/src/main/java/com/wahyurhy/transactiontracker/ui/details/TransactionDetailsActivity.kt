@@ -152,6 +152,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
             isToday = isChecked
             isEnableBtnSave(isChecked)
         }
+        isEnableBtnSave(false)
     }
 
     private fun deleteData(transactionID: String) {
@@ -412,7 +413,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
             dbRef.child(transactionID).setValue(transaction)
                 .addOnCompleteListener {
                     showLoading(false)
-                    broadcastReceiver.setMonthlyNotification(this, name, amount, date)
+                    if (amountLeft > 0.0) {
+                        broadcastReceiver.setMonthlyNotification(this, name, amountLeft, date)
+                    }
                     Toast.makeText(this, getString(R.string.data_saved), Toast.LENGTH_SHORT).show()
                     finish()
                 }
@@ -694,7 +697,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
             dbRef.child(transactionID).setValue(transactionInfo)
                 .addOnCompleteListener {
                     showLoading(false)
-                    broadcastReceiver.setMonthlyNotification(this, name, payment, calendar.time.time)
+                    if (amountLeft > 0.0) {
+                        broadcastReceiver.setMonthlyNotification(this, name, amountLeft, date)
+                    }
                     Toast.makeText(this, getString(R.string.data_changed), Toast.LENGTH_SHORT).show()
                     finish()
                 }

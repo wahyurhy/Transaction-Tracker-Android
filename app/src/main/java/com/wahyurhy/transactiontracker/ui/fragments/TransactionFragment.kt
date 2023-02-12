@@ -35,6 +35,9 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 
@@ -503,21 +506,20 @@ class TransactionFragment : Fragment() {
             }
             val dueDate = transactionData!!.dueDateTransaction as Long
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val transactionInstant = Instant.ofEpochMilli(dueDate)
-                val currentInstant = Instant.now()
-                val duration = Duration.between(transactionInstant, currentInstant)
-                val months = duration.toDays() / 30
-                checkMonth(months)
+                val dueDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dueDate), ZoneId.systemDefault())
+                val currentTime = LocalDateTime.now()
+                val monthsPassed = ChronoUnit.MONTHS.between(dueDateTime, currentTime)
+                checkMonth(monthsPassed)
             } else {
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = dueDate
+                val currentTime = Calendar.getInstance().timeInMillis
+                val dueDateCalendar = Calendar.getInstance()
+                dueDateCalendar.timeInMillis = dueDate
+                val currentCalendar = Calendar.getInstance()
+                currentCalendar.timeInMillis = currentTime
 
-                val now = Calendar.getInstance()
-                val months =
-                    (now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR)) * 12 + now.get(Calendar.MONTH) - calendar.get(
-                        Calendar.MONTH
-                    )
-                checkMonth(months.toLong())
+                val monthsPassed = 12 * (currentCalendar.get(Calendar.YEAR) - dueDateCalendar.get(Calendar.YEAR)) +
+                        (currentCalendar.get(Calendar.MONTH) - dueDateCalendar.get(Calendar.MONTH))
+                checkMonth(monthsPassed.toLong())
             }
         }
     }
@@ -720,7 +722,6 @@ class TransactionFragment : Fragment() {
                     binding.apply {
                         progressBar.visibility = View.GONE
                     }
-                    broadcastReceiver.setMonthlyNotification(requireContext(), name, paymentAmount!!.toDouble(), calendar.time.time)
                     Toast.makeText(requireContext(), getString(R.string.success_to_mark), Toast.LENGTH_SHORT).show()
                     getSearchData(name)
                 }
@@ -808,7 +809,6 @@ class TransactionFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        dbRef.removeEventListener(valueEventListenerGetTransactionData)
         queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
         if (isSearched) {
             querySearch.removeEventListener(valueEventListenerSearch)
@@ -821,8 +821,8 @@ class TransactionFragment : Fragment() {
         if (isSearched) {
             querySearch.removeEventListener(valueEventListenerSearch)
         }
-        dbRef.removeEventListener(valueEventListenerGetTransactionData)
-        queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
+//        dbRef.removeEventListener(valueEventListenerGetTransactionData)
+//        queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
         transactionData = null
         calendar = null
         dateFormat = null

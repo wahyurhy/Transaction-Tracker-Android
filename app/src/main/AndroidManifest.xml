@@ -46,6 +46,8 @@
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
+        <receiver android:name=".notification.MonthlyNotification" />
     </application>
 
 </manifest>

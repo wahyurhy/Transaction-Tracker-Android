@@ -39,20 +39,22 @@ class MonthlyNotification : BroadcastReceiver() {
         val pendingIntent =
             PendingIntent.getBroadcast(context, ID_REPEATING, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val interval = 30L * 24 * 60 * 60 * 1000
-        val targetHour = 8
-        val targetMinute = 0
-        val targetSecond = 0
-        val targetTimeInMilliseconds = targetHour * 60 * 60 * 1000 + targetMinute * 60 * 1000 + targetSecond * 1000
-        val nextNotificationTime = dueDate + interval - (dueDate + interval) % (24 * 60 * 60 * 1000) + targetTimeInMilliseconds
+        val calendar: Calendar = Calendar.getInstance()
+        val dateFromLong = Date(dueDate)
+        calendar.time = dateFromLong
+        calendar.add(Calendar.MONTH, 1)
+        val nextMonth = calendar.time.time
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        alarmManager.setExact(
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            nextNotificationTime,
+            nextMonth,
             pendingIntent
         )
+
+        val sixHours = 6L * 60 * 60 * 1000
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, nextMonth, sixHours, pendingIntent)
 
 //        Toast.makeText(context, "Monthly Notification ON", Toast.LENGTH_SHORT).show()
     }
@@ -75,7 +77,7 @@ class MonthlyNotification : BroadcastReceiver() {
 
         val mBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setContentIntent(pendingIntent)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -105,7 +107,7 @@ class MonthlyNotification : BroadcastReceiver() {
     private fun getPendingIntent(context: Context): PendingIntent? {
         val intent = Intent(context, MainActivity::class.java)
         return TaskStackBuilder.create(context).run {
-            addNextIntentWithParentStack(intent)
+            addNextIntent(intent)
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
     }
