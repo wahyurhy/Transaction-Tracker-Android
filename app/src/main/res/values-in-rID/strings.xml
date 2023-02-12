@@ -121,4 +121,5 @@
     <string name="choose_action_info">Pilih aksi</string>
     <string name="success_to_mark">Berhasil melunaskan</string>
     <string name="cancel">batal</string>
+    <string name="you_choose_item_info">Anda memilih %1$s dengan total pembayaran %2$s</string>
 </resources>

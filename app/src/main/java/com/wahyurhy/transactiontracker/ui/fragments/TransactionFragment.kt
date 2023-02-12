@@ -27,13 +27,13 @@ import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.adapter.TransactionAdapter
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.FragmentTransactionBinding
+import com.wahyurhy.transactiontracker.databinding.MarkDialogBinding
 import com.wahyurhy.transactiontracker.notification.MonthlyNotification
 import com.wahyurhy.transactiontracker.ui.details.DetailMessagesActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -669,12 +669,20 @@ class TransactionFragment : Fragment() {
         stateTransaction: Boolean
     ) {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(getString(R.string.choose_action_info))
-        builder.setPositiveButton(getString(R.string.mark_as_paid_off)) { _, _ ->
-            markAsDone(idTransaction, name, dueDateTransaction, invertedDate, paymentAmount, whatsAppNumber, stateTransaction)
+        val dialogView = MarkDialogBinding.inflate(layoutInflater)
+        builder.setView(dialogView.root)
+
+        val markDialog = builder.create()
+
+        dialogView.tvTitle.text = getString(R.string.choose_action_info)
+        dialogView.infoChooseItem.text = getString(R.string.you_choose_item_info, name, formatRupiah?.format(paymentAmount)?.replace(",00", ""))
+        dialogView.btnCancel.setOnClickListener {
+            markDialog.dismiss()
         }
-        builder.setNegativeButton(getString(R.string.cancel)) { _, _ -> }
-        builder.show()
+        dialogView.btnMark.setOnClickListener {
+            markAsDone(idTransaction, name, dueDateTransaction, invertedDate, paymentAmount, whatsAppNumber, stateTransaction, markDialog, dialogView)
+        }
+        markDialog.show()
     }
 
     private fun markAsDone(
@@ -684,11 +692,11 @@ class TransactionFragment : Fragment() {
         invertedDate: Long,
         paymentAmount: Double?,
         whatsAppNumber: String,
-        stateTransaction: Boolean
+        stateTransaction: Boolean,
+        markDialog: AlertDialog,
+        dialogView: MarkDialogBinding
     ) {
-        binding.apply {
-            progressBar.visibility = View.VISIBLE
-        }
+        dialogView.progressBar.visibility = View.VISIBLE
         val user = Firebase.auth.currentUser
         val uid = user?.uid
 
@@ -719,16 +727,16 @@ class TransactionFragment : Fragment() {
 
             dbRef.child(idTransaction).setValue(transactionInfo)
                 .addOnCompleteListener {
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                    }
+                    dialogView.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), getString(R.string.success_to_mark), Toast.LENGTH_SHORT).show()
-                    getSearchData(name)
+                    if (isSearched) {
+                        querySearch.removeEventListener(valueEventListenerSearch)
+                        getSearchData(name)
+                    }
+                    markDialog.dismiss()
                 }
                 .addOnFailureListener { err ->
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                    }
+                    dialogView.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Error ${err.message}", Toast.LENGTH_SHORT).show()
                 }
         }

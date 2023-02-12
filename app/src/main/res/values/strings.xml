@@ -128,4 +128,5 @@
     <string name="mark_as_paid_off">Mark as paid off</string>
     <string name="choose_action_info">Choose as action</string>
     <string name="cancel">cancel</string>
+    <string name="you_choose_item_info">You choose %1$s that must paid for %2$s</string>
 </resources>
