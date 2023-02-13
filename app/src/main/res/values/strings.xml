@@ -79,7 +79,7 @@
     <string name="messageLeftInfo">%1$s : %2$s left</string>
     <string name="messagePassInfo">%1$s has passed for %2$s months.</string>
     <string name="info_not_yet_full">Here are the customers who have not yet paid in full</string>
-    <string name="message_invoice">Assalamu\'alaikum Wr. Wb.\n\nBapak/Ibu %1$s, maaf untuk tagihan WiFi pada periode %2$s-%3$s-nya sudah dapat dibayarkan 🙏\n\nUntuk total pembayaran sebesar %4$s, dapat melakukan Pembayaran Langsung (Uang Tunai) atau dapat mentransfer ke rekening bank (Mandiri) berikut:\n\nNo. Rek : 1560016057376\na/n : Dasriyah\n\nTerimakasih..</string>
+    <string name="message_invoice" translatable="false">Assalamu\'alaikum Wr. Wb.\n\nBapak/Ibu %1$s, maaf untuk tagihan WiFi pada periode %2$s-%3$s-nya sudah dapat dibayarkan 🙏\n\nUntuk total pembayaran sebesar %4$s, dapat melakukan Pembayaran Langsung (Uang Tunai) atau dapat mentransfer ke rekening bank (Mandiri) berikut:\n\nNo. Rek : 1560016057376\na/n : Dasriyah\n\nTerimakasih..</string>
     <string name="detail_messages">Detail Messages</string>
     <string name="blablabla" translatable="false">blablabla...</string>
     <string name="notification">Notification</string>

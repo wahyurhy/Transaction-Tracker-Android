@@ -31,6 +31,7 @@ import com.wahyurhy.transactiontracker.databinding.MarkDialogBinding
 import com.wahyurhy.transactiontracker.notification.MonthlyNotification
 import com.wahyurhy.transactiontracker.ui.details.DetailMessagesActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
+import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -82,10 +83,14 @@ class TransactionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-        selectedMonth =
-            resources.getStringArray(R.array.filter_sort_by_month)[0].toString() // default month
-        _binding = FragmentTransactionBinding.inflate(inflater, container, false)
+        try {
+            // Inflate the layout for this fragment
+            selectedMonth =
+                resources.getStringArray(R.array.filter_sort_by_month)[0].toString() // default month
+            _binding = FragmentTransactionBinding.inflate(inflater, container, false)
+        } catch (e: Exception) {
+            startActivity(Intent(requireContext(), MainActivity::class.java))
+        }
         return binding.root
     }
 
@@ -615,7 +620,7 @@ class TransactionFragment : Fragment() {
 
         binding.rvTransaction.adapter = mAdapter
 
-        mAdapter.setOnItemClickListener(object : TransactionAdapter.onItemClickListener {
+        mAdapter.setOnItemClickListener(object : TransactionAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val intent = Intent(
                     this@TransactionFragment.activity,
@@ -637,7 +642,7 @@ class TransactionFragment : Fragment() {
             }
         })
 
-        mAdapter.setOnLongItemClickListener(object : TransactionAdapter.onLongItemClickListener {
+        mAdapter.setOnLongItemClickListener(object : TransactionAdapter.OnLongItemClickListener {
             override fun onLongItemClick(position: Int) {
 
                 val idTransaction = transactionList[position].id.toString()
@@ -829,8 +834,12 @@ class TransactionFragment : Fragment() {
         if (isSearched) {
             querySearch.removeEventListener(valueEventListenerSearch)
         }
-//        dbRef.removeEventListener(valueEventListenerGetTransactionData)
-//        queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
+        try {
+            dbRef.removeEventListener(valueEventListenerGetTransactionData)
+            queryGetTransactionData.removeEventListener(valueEventListenerGetTransactionData)
+        } catch (e: Exception) {
+            Log.e("TransactionFragment", "onDestroy: ${e.message}")
+        }
         transactionData = null
         calendar = null
         dateFormat = null

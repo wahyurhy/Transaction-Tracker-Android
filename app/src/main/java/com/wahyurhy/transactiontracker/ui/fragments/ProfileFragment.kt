@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.databinding.FragmentProfileBinding
 import com.wahyurhy.transactiontracker.ui.login.LoginActivity
+import com.wahyurhy.transactiontracker.ui.main.MainActivity
 
 class ProfileFragment : Fragment() {
 
@@ -29,8 +30,12 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        try {
+            // Inflate the layout for this fragment
+            _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        } catch (e: Exception) {
+            startActivity(Intent(requireContext(), MainActivity::class.java))
+        }
         return binding.root
     }
 

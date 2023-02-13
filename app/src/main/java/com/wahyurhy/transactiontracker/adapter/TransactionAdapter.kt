@@ -4,8 +4,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -18,24 +16,25 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TransactionAdapter : ListAdapter<TransactionModel, TransactionAdapter.ViewHolder>(DiffCallback) {
+class TransactionAdapter :
+    ListAdapter<TransactionModel, TransactionAdapter.ViewHolder>(DiffCallback) {
 
-    private lateinit var mListener: onItemClickListener
-    private lateinit var mLongClickListener: onLongItemClickListener
+    private lateinit var mListener: OnItemClickListener
+    private lateinit var mLongClickListener: OnLongItemClickListener
 
-    interface onItemClickListener {
+    interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
 
-    interface onLongItemClickListener {
+    interface OnLongItemClickListener {
         fun onLongItemClick(position: Int)
     }
 
-    fun setOnItemClickListener(clickListener: onItemClickListener) {
+    fun setOnItemClickListener(clickListener: OnItemClickListener) {
         mListener = clickListener
     }
 
-    fun setOnLongItemClickListener(longClickListener: onLongItemClickListener) {
+    fun setOnLongItemClickListener(longClickListener: OnLongItemClickListener) {
         mLongClickListener = longClickListener
     }
 
@@ -52,7 +51,8 @@ class TransactionAdapter : ListAdapter<TransactionModel, TransactionAdapter.View
             tvName.text = currentTransaction.name
 
             try {
-                val decryptedWhatsApp = decryptAES(currentTransaction.whatsAppNumber.toString(), SECRET_KEY)
+                val decryptedWhatsApp =
+                    decryptAES(currentTransaction.whatsAppNumber.toString(), SECRET_KEY)
                 currentTransaction.whatsAppNumber = decryptedWhatsApp
             } catch (e: Exception) {
                 Log.e("TransactionAdapter", "onBindViewHolder: ${e.message}")
@@ -68,8 +68,8 @@ class TransactionAdapter : ListAdapter<TransactionModel, TransactionAdapter.View
 
             tvDate.text = simpleDateFormat.format(result)
 
-            when {
-                currentTransaction.stateTransaction == true -> {
+            when (currentTransaction.stateTransaction) {
+                true -> {
                     tvState.text = itemView.context.resources.getString(R.string.paid_off)
                     tvState.setBackgroundResource(R.drawable.bg_state_true)
                     if (currentTransaction.amountOver != 0.0) {
@@ -79,7 +79,7 @@ class TransactionAdapter : ListAdapter<TransactionModel, TransactionAdapter.View
                         )
                     }
                 }
-                currentTransaction.stateTransaction == false -> {
+                false -> {
                     tvState.text = itemView.context.resources.getString(R.string.paid_yet)
                     tvState.setBackgroundResource(R.drawable.bg_state_false)
 
@@ -97,17 +97,23 @@ class TransactionAdapter : ListAdapter<TransactionModel, TransactionAdapter.View
                         }
                     }
                 }
+                else -> {
+                    Log.e("TransactionAdapter", "nothing to do")
+                }
             }
         }
     }
 
-    class ViewHolder(itemView: View, clickListener: onItemClickListener, longClickListener: onLongItemClickListener) :
+    class ViewHolder(
+        itemView: View,
+        clickListener: OnItemClickListener,
+        longClickListener: OnLongItemClickListener
+    ) :
         RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvName)
         val tvTransactionAmount: TextView = itemView.findViewById(R.id.tvAmount)
         val tvDate: TextView = itemView.findViewById(R.id.tvDate)
         val tvState: TextView = itemView.findViewById(R.id.tvState)
-        val typeIcon: ImageView = itemView.findViewById(R.id.typeIcon)
 
         init {
             itemView.setOnClickListener {
