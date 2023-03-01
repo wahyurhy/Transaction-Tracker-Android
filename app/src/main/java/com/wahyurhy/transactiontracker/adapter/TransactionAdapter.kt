@@ -8,9 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.wahyurhy.transactiontracker.BuildConfig
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
-import com.wahyurhy.transactiontracker.utils.SECRET_KEY
 import com.wahyurhy.transactiontracker.utils.decryptAES
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -52,7 +52,7 @@ class TransactionAdapter :
 
             try {
                 val decryptedWhatsApp =
-                    decryptAES(currentTransaction.whatsAppNumber.toString(), SECRET_KEY)
+                    decryptAES(currentTransaction.whatsAppNumber.toString(), BuildConfig.SECRET_KEY)
                 currentTransaction.whatsAppNumber = decryptedWhatsApp
             } catch (e: Exception) {
                 Log.e("TransactionAdapter", "onBindViewHolder: ${e.message}")

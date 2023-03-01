@@ -23,6 +23,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.wahyurhy.transactiontracker.BuildConfig
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityTransactionDetailsBinding
@@ -382,7 +383,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         val invertedDateAddOneMonth = nextMonth.time * -1
 
-        val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
+        val encryptedWhatsApp = encryptAES(whatsApp, BuildConfig.SECRET_KEY)
 
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
@@ -677,7 +678,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         val invertedDateAddOneMonth = nextMonth.time * -1
 
-        val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
+        val encryptedWhatsApp = encryptAES(whatsApp, BuildConfig.SECRET_KEY)
 
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)

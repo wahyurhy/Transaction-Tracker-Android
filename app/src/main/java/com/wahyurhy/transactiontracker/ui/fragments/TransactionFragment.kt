@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +35,7 @@ import com.wahyurhy.transactiontracker.ui.details.DetailMessagesActivity
 import com.wahyurhy.transactiontracker.ui.details.TransactionDetailsActivity
 import com.wahyurhy.transactiontracker.ui.main.MainActivity
 import com.wahyurhy.transactiontracker.utils.*
+import kotlinx.coroutines.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -77,7 +80,8 @@ class TransactionFragment : Fragment() {
     private var splitValue: List<String>? = null
 
     private var _binding: FragmentTransactionBinding? = null
-    private val binding get() = _binding!!
+    private val binding
+        get() = _binding ?: throw IllegalStateException("Binding is not initialized")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -511,7 +515,8 @@ class TransactionFragment : Fragment() {
             }
             val dueDate = transactionData!!.dueDateTransaction as Long
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val dueDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dueDate), ZoneId.systemDefault())
+                val dueDateTime =
+                    LocalDateTime.ofInstant(Instant.ofEpochMilli(dueDate), ZoneId.systemDefault())
                 val currentTime = LocalDateTime.now()
                 val monthsPassed = ChronoUnit.MONTHS.between(dueDateTime, currentTime)
                 checkMonth(monthsPassed)
@@ -522,8 +527,9 @@ class TransactionFragment : Fragment() {
                 val currentCalendar = Calendar.getInstance()
                 currentCalendar.timeInMillis = currentTime
 
-                val monthsPassed = 12 * (currentCalendar.get(Calendar.YEAR) - dueDateCalendar.get(Calendar.YEAR)) +
-                        (currentCalendar.get(Calendar.MONTH) - dueDateCalendar.get(Calendar.MONTH))
+                val monthsPassed =
+                    12 * (currentCalendar.get(Calendar.YEAR) - dueDateCalendar.get(Calendar.YEAR)) +
+                            (currentCalendar.get(Calendar.MONTH) - dueDateCalendar.get(Calendar.MONTH))
                 checkMonth(monthsPassed.toLong())
             }
         }
@@ -653,7 +659,15 @@ class TransactionFragment : Fragment() {
                 val whatsAppNumber = transactionList[position].whatsAppNumber.toString()
                 val stateTransaction = transactionList[position].stateTransaction as Boolean
 
-                showDialog(idTransaction, name, dueDateTransaction, invertedDate, paymentAmount, whatsAppNumber, stateTransaction)
+                showDialog(
+                    idTransaction,
+                    name,
+                    dueDateTransaction,
+                    invertedDate,
+                    paymentAmount,
+                    whatsAppNumber,
+                    stateTransaction
+                )
             }
         })
 
@@ -680,12 +694,26 @@ class TransactionFragment : Fragment() {
         val markDialog = builder.create()
 
         dialogView.tvTitle.text = getString(R.string.choose_action_info)
-        dialogView.infoChooseItem.text = getString(R.string.you_choose_item_info, name, formatRupiah?.format(paymentAmount)?.replace(",00", ""))
+        dialogView.infoChooseItem.text = getString(
+            R.string.you_choose_item_info,
+            name,
+            formatRupiah?.format(paymentAmount)?.replace(",00", "")
+        )
         dialogView.btnCancel.setOnClickListener {
             markDialog.dismiss()
         }
         dialogView.btnMark.setOnClickListener {
-            markAsDone(idTransaction, name, dueDateTransaction, invertedDate, paymentAmount, whatsAppNumber, stateTransaction, markDialog, dialogView)
+            markAsDone(
+                idTransaction,
+                name,
+                dueDateTransaction,
+                invertedDate,
+                paymentAmount,
+                whatsAppNumber,
+                stateTransaction,
+                markDialog,
+                dialogView
+            )
         }
         markDialog.show()
     }
@@ -717,7 +745,18 @@ class TransactionFragment : Fragment() {
 
         if (uid != null) {
             val dbRef = FirebaseDatabase.getInstance().getReference(uid)
-            val transactionInfo = TransactionModel(idTransaction, name, whatsAppNumber, paymentAmount, dueDateTransaction, true, invertedDate, 0.0, 0.0, paymentAmount)
+            val transactionInfo = TransactionModel(
+                idTransaction,
+                name,
+                whatsAppNumber,
+                paymentAmount,
+                dueDateTransaction,
+                true,
+                invertedDate,
+                0.0,
+                0.0,
+                paymentAmount
+            )
 
             createAddNextMonthTransaction(
                 dbRef,
@@ -733,7 +772,11 @@ class TransactionFragment : Fragment() {
             dbRef.child(idTransaction).setValue(transactionInfo)
                 .addOnCompleteListener {
                     dialogView.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), getString(R.string.success_to_mark), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.success_to_mark),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     if (isSearched) {
                         querySearch.removeEventListener(valueEventListenerSearch)
                         getSearchData(name)
@@ -742,7 +785,8 @@ class TransactionFragment : Fragment() {
                 }
                 .addOnFailureListener { err ->
                     dialogView.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Error ${err.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error ${err.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }
         }
     }
@@ -772,7 +816,12 @@ class TransactionFragment : Fragment() {
                 0.0,
                 0.0
             )
-            broadcastReceiver.setMonthlyNotification(requireContext(), name, paymentAmount!!.toDouble(), nextMonth.time)
+            broadcastReceiver.setMonthlyNotification(
+                requireContext(),
+                name,
+                paymentAmount!!.toDouble(),
+                nextMonth.time
+            )
             dbRef.child(newTransactionID).setValue(transactionAddOneMonth)
         }
     }

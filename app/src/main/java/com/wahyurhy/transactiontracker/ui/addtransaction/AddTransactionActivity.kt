@@ -18,6 +18,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.wahyurhy.transactiontracker.BuildConfig
 import com.wahyurhy.transactiontracker.R
 import com.wahyurhy.transactiontracker.data.source.local.model.TransactionModel
 import com.wahyurhy.transactiontracker.databinding.ActivityAddTransactionBinding
@@ -120,7 +121,7 @@ class AddTransactionActivity : AppCompatActivity() {
 
                     invertedDate = date * -1 //convert millis value to negative, so it can be sort as descending order
 
-                    val encryptedWhatsApp = encryptAES(whatsApp, SECRET_KEY)
+                    val encryptedWhatsApp = encryptAES(whatsApp, BuildConfig.SECRET_KEY)
 
                     val transaction = TransactionModel(
                         transactionID.toString(),
